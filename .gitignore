@@ -1,0 +1,7 @@
+node_modules/
+dist/
+draft-html/
+draft-html.zip
+.astro/
+.env
+.DS_Store

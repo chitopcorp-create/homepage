@@ -1,0 +1,425 @@
+---
+interface Props {
+  title: string;
+  submenus?: { label: string; href: string }[];
+  /** true: 제목+소메뉴, 스크롤 시 가로 소메뉴만 상단 고정 */
+  stickySubmenu?: boolean;
+  /** hash 탭 기본 섹션 id (예: greeting, news) */
+  defaultSectionId?: string;
+  /** hash: #섹션 탭 전환 | query: ?category= (사업실적) */
+  submenuMode?: 'hash' | 'query';
+  /** 제목 밴드 배경 이미지 (예: 회사소개) */
+  titleBackgroundImage?: string;
+  /** 배경 이미지 초점 (세로 사진 등) */
+  titleBackgroundPosition?: string;
+  /** cover | contain 등 — 세로 사진은 contain 권장 */
+  titleBackgroundSize?: string;
+  /** contain 시 여백 색 (하늘색 등) */
+  titleBackgroundColor?: string;
+  /** 세로형 배경용 — 제목 영역 높이 확대 */
+  immersiveHeroTall?: boolean;
+  /** 첫 화면에서 헤더·제목 영역에 배경 이미지 (가로 탭은 흰색) */
+  immersiveHero?: boolean;
+}
+
+const {
+  title,
+  submenus = [],
+  stickySubmenu = false,
+  defaultSectionId,
+  submenuMode = 'hash',
+  titleBackgroundImage,
+  titleBackgroundPosition = 'center',
+  titleBackgroundSize = 'cover',
+  titleBackgroundColor,
+  immersiveHeroTall = false,
+  immersiveHero = false,
+} = Astro.props;
+
+const useImmersiveHero = immersiveHero && !!titleBackgroundImage;
+const immersiveBgStyle = titleBackgroundImage
+  ? [
+      `background-image: url(${titleBackgroundImage})`,
+      `background-position: ${titleBackgroundPosition}`,
+      `background-size: ${titleBackgroundSize}`,
+      titleBackgroundColor ? `background-color: ${titleBackgroundColor}` : '',
+    ]
+      .filter(Boolean)
+      .join('; ')
+  : undefined;
+
+const linkSubmenuMode = submenuMode === 'query' ? 'query' : 'tabs';
+
+const submenuNavClass = [
+  'mx-auto w-full',
+  submenus.length > 5 ? 'max-w-7xl' : 'max-w-5xl',
+];
+
+const submenuListStyle =
+  submenus.length <= 5
+    ? `grid-template-columns: repeat(${submenus.length}, minmax(0, 1fr));`
+    : undefined;
+
+const submenuLinkClass = (compact: boolean) =>
+  compact
+    ? 'hero-submenu-link inline-flex min-h-[3.75rem] w-full items-center justify-center border-b-[3px] border-transparent px-1 font-semibold text-gray-700 transition-colors duration-200 hover:text-[#38bdf8] text-xs sm:text-sm'
+    : 'hero-submenu-link inline-flex min-h-[3.75rem] w-full items-center justify-center border-b-[3px] border-transparent px-3 font-semibold text-gray-700 transition-colors duration-200 hover:text-[#38bdf8] text-base md:text-lg';
+---
+
+{
+  stickySubmenu && submenus.length > 0 ? (
+    <>
+      {
+        useImmersiveHero ? (
+          <div class="page-hero-immersive relative" data-page-hero-immersive>
+            <div
+              class="page-hero-immersive__bg absolute inset-0 bg-no-repeat"
+              style={immersiveBgStyle}
+              aria-hidden="true"
+            />
+            <div class="page-hero-immersive__overlay absolute inset-0" aria-hidden="true" />
+            <section
+              data-page-hero-root
+              data-page-hero-title
+              class="page-hero-title-band page-hero-title-band--immersive relative z-10"
+            >
+              <div
+                class:list={[
+                  'page-hero-title-band__inner mx-auto flex max-w-7xl items-center justify-center px-4 pb-8 pt-[var(--site-header-height,5.5rem)] md:pb-10 lg:pb-12',
+                  immersiveHeroTall
+                    ? 'min-h-[min(70vh,34rem)] md:min-h-[min(76vh,38rem)] lg:min-h-[min(80vh,42rem)]'
+                    : 'min-h-[min(48vh,20rem)] md:min-h-[min(54vh,24rem)]',
+                ]}
+              >
+                <h1 class="text-center text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+                  {title}
+                </h1>
+              </div>
+            </section>
+          </div>
+        ) : (
+          <section
+            data-page-hero-root
+            data-page-hero-title
+            class:list={[
+              'page-hero-title-band border-b border-gray-100 pt-[var(--site-header-height,5.5rem)]',
+              titleBackgroundImage ? 'page-hero-title-band--image' : 'bg-white',
+            ]}
+            style={titleBackgroundImage ? `background-image: url(${titleBackgroundImage})` : undefined}
+          >
+            <div class="page-hero-title-band__inner mx-auto max-w-7xl px-4 pb-10 pt-8 md:pb-12 md:pt-10 lg:px-8 lg:pb-16 lg:pt-12">
+              <h1
+                class:list={[
+                  'text-center text-2xl font-bold tracking-tight md:text-3xl lg:text-4xl',
+                  titleBackgroundImage ? 'text-white' : 'text-navy',
+                ]}
+              >
+                {title}
+              </h1>
+            </div>
+          </section>
+        )
+      }
+
+      <div
+        class="page-submenu-sticky sticky z-[45] border-b border-gray-200 bg-white shadow-sm"
+        data-sticky-submenu-bar
+      >
+        <nav class:list={[...submenuNavClass, 'px-4 lg:px-8']} aria-label={`${title} 소메뉴`}>
+          <ul
+            class:list={[
+              'grid gap-1',
+              submenus.length > 5 && 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8',
+            ]}
+            style={submenuListStyle}
+          >
+            {submenus.map((menu) => (
+              <li class="text-center">
+                <a
+                  href={menu.href}
+                  class={submenuLinkClass(submenus.length > 5)}
+                  data-submenu-link
+                  data-submenu-mode={linkSubmenuMode}
+                  data-default-section={defaultSectionId}
+                >
+                  {menu.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </>
+  ) : (
+    <section class="relative border-b border-gray-200 bg-white pt-12 md:pt-16">
+      <div class="mx-auto max-w-7xl px-4 lg:px-8">
+        <h1 class="text-center text-3xl font-bold tracking-tight text-navy md:text-4xl lg:text-5xl">
+          {title}
+        </h1>
+        {
+          submenus.length > 0 && (
+            <nav class:list={[...submenuNavClass, 'mt-10']} aria-label={`${title} 소메뉴`}>
+              <ul
+                class:list={[
+                  'grid gap-1',
+                  submenus.length > 5 && 'grid-cols-2 sm:grid-cols-4 lg:grid-cols-8',
+                ]}
+                style={submenuListStyle}
+              >
+                {submenus.map((menu) => (
+                  <li class="text-center">
+                    <a
+                      href={menu.href}
+                      class:list={[
+                        'hero-submenu-link inline-flex min-h-14 w-full items-center justify-center border-b-[3px] border-transparent px-1 font-semibold text-gray-500 transition-colors duration-200 hover:text-[#38bdf8]',
+                        submenus.length > 5 ? 'text-xs sm:text-sm' : 'px-3 text-base',
+                      ]}
+                      data-submenu-link
+                      data-submenu-mode={linkSubmenuMode}
+                      data-default-section={defaultSectionId}
+                    >
+                      {menu.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )
+        }
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .page-hero-immersive__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(15, 31, 61, 0.25) 0%,
+      rgba(15, 31, 61, 0.45) 55%,
+      rgba(15, 31, 61, 0.55) 100%
+    );
+  }
+
+  .page-hero-title-band--immersive h1 {
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .page-hero-title-band--image {
+    background-color: #0f1f3d;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  .page-hero-title-band--image .page-hero-title-band__inner {
+    background: linear-gradient(
+      180deg,
+      rgba(15, 31, 61, 0.35) 0%,
+      rgba(15, 31, 61, 0.5) 100%
+    );
+  }
+
+  .page-hero-title-band--image h1 {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  }
+</style>
+
+<script>
+  const heroRoot = document.querySelector<HTMLElement>('[data-page-hero-root]');
+  if (heroRoot && window.location.hash) {
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+  }
+
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-submenu-link]'));
+
+  if (links.length > 0) {
+    const queryMode = links.some((link) => link.dataset.submenuMode === 'query');
+    const tabMode = links.some((link) => link.dataset.submenuMode === 'tabs');
+    const defaultSectionId = links[0]?.dataset.defaultSection ?? '';
+
+    const normalize = (url: string) => {
+      const parsed = new URL(url, window.location.origin);
+      return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+    };
+
+    const toHash = (url: string) => new URL(url, window.location.origin).hash.replace('#', '');
+    const sectionIds = links.map((link) => toHash(link.href)).filter(Boolean);
+    const sectionElements = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    const relatedElements = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-submenu-parent]')
+    );
+
+    const fallbackSectionId =
+      defaultSectionId && sectionIds.includes(defaultSectionId)
+        ? defaultSectionId
+        : sectionIds[0];
+
+    const setActiveByUrl = (targetUrl: string) => {
+      let matched = false;
+      links.forEach((link) => {
+        const isActive = normalize(link.href) === targetUrl;
+        link.classList.toggle('border-[#38bdf8]', isActive);
+        link.classList.toggle('text-[#38bdf8]', isActive);
+        link.classList.toggle('text-gray-700', !isActive);
+        if (isActive) matched = true;
+      });
+      if (!matched && links[0]) {
+        const fallbackLink = queryMode
+          ? links[0]
+          : links.find((link) => toHash(link.href) === fallbackSectionId) ?? links[0];
+        setActiveByUrl(normalize(fallbackLink.href));
+      }
+    };
+
+    const syncHeaderHeight = () => {
+      const headerBar = document.querySelector<HTMLElement>('.header-bar');
+      const header = document.getElementById('site-header');
+      const height = headerBar?.offsetHeight ?? header?.offsetHeight ?? 88;
+      document.documentElement.style.setProperty('--site-header-height', `${height}px`);
+    };
+
+    const getStickyOffset = () => {
+      const header = document.getElementById('site-header');
+      const stickyBar = document.querySelector<HTMLElement>('[data-sticky-submenu-bar]');
+      const headerH = header?.offsetHeight ?? 88;
+      const stickyH = stickyBar?.offsetHeight ?? 0;
+      return headerH + stickyH + 8;
+    };
+
+    const scrollToHeroTop = () => {
+      syncHeaderHeight();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const scrollToActiveSection = (sectionId: string) => {
+      syncHeaderHeight();
+      const section = document.getElementById(sectionId);
+      const offset = getStickyOffset();
+
+      if (section) {
+        const top = section.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        return;
+      }
+
+      scrollToHeroTop();
+    };
+
+    const showOnlySection = (id: string) => {
+      if (sectionElements.length === 0) return;
+
+      let shown = false;
+      sectionElements.forEach((section) => {
+        const visible = section.id === id;
+        section.style.display = visible ? '' : 'none';
+        if (visible) shown = true;
+      });
+
+      if (!shown && sectionElements[0]) {
+        sectionElements[0].style.display = '';
+        relatedElements.forEach((section) => {
+          section.style.display =
+            section.dataset.submenuParent === sectionElements[0].id ? '' : 'none';
+        });
+        return;
+      }
+
+      relatedElements.forEach((section) => {
+        section.style.display = section.dataset.submenuParent === id ? '' : 'none';
+      });
+    };
+
+    const getCategoryFromUrl = (url: string) => {
+      const parsed = new URL(url, window.location.origin);
+      return parsed.searchParams.get('category') ?? '전체';
+    };
+
+    syncHeaderHeight();
+    window.addEventListener('resize', syncHeaderHeight, { passive: true });
+
+    if (queryMode) {
+      const applyQuerySubmenu = (scrollToHero = false) => {
+        const pageUrl = `${window.location.pathname}${window.location.search}`;
+        const activeLink =
+          links.find((link) => normalize(link.href) === pageUrl) ?? links[0];
+        if (activeLink) {
+          setActiveByUrl(normalize(activeLink.href));
+        }
+        const category = getCategoryFromUrl(activeLink?.href ?? window.location.href);
+        window.dispatchEvent(
+          new CustomEvent('page-submenu-query', { detail: { category } })
+        );
+        if (scrollToHero) scrollToHeroTop();
+      };
+
+      applyQuerySubmenu(false);
+
+      window.addEventListener('popstate', () => applyQuerySubmenu(true));
+
+      links.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const target = new URL(link.href, window.location.origin);
+          if (target.pathname !== window.location.pathname) return;
+
+          event.preventDefault();
+          const targetUrl = `${target.pathname}${target.search}`;
+
+          if (`${window.location.pathname}${window.location.search}` !== targetUrl) {
+            history.pushState(null, '', targetUrl);
+          }
+
+          applyQuerySubmenu(true);
+        });
+      });
+    } else if (tabMode && sectionElements.length > 0) {
+      const applySectionFromHash = (scrollToSection = false) => {
+        const currentHash = window.location.hash.replace('#', '');
+        const selectedId = sectionIds.includes(currentHash) ? currentHash : fallbackSectionId;
+        if (!selectedId) return;
+
+        showOnlySection(selectedId);
+
+        const selectedLink = links.find((link) => toHash(link.href) === selectedId);
+        if (selectedLink) {
+          setActiveByUrl(normalize(selectedLink.href));
+        }
+
+        if (scrollToSection) {
+          requestAnimationFrame(() => scrollToActiveSection(selectedId));
+        }
+      };
+
+      applySectionFromHash(false);
+
+      window.addEventListener('hashchange', () => applySectionFromHash(true));
+      window.addEventListener('popstate', () => applySectionFromHash(true));
+
+      links.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          const hash = toHash(link.href);
+          if (!hash) return;
+
+          const onSamePage =
+            new URL(link.href, window.location.origin).pathname === window.location.pathname;
+          if (!onSamePage) return;
+
+          event.preventDefault();
+          const targetUrl = `${window.location.pathname}${window.location.search}#${hash}`;
+
+          if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== targetUrl) {
+            history.pushState(null, '', targetUrl);
+          }
+
+          applySectionFromHash(true);
+        });
+      });
+    } else {
+      const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+      setActiveByUrl(current);
+    }
+  }
+</script>

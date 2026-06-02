@@ -1,0 +1,241 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import OverviewBanner from '@/components/OverviewBanner.astro';
+import NaverMap from '@/components/NaverMap.astro';
+import company from '@/data/company.json';
+import navigation from '@/data/navigation.json';
+
+const aboutMenu = navigation.items.find((item) => item.label === '회사소개');
+---
+
+<BaseLayout
+  title="회사소개"
+  description={`${company.name} 회사소개 - 인사말, 회사개요, 연혁, 조직도, 오시는 길`}
+  tabHero
+>
+  <PageHero
+    title="회사소개"
+    submenus={aboutMenu?.children ?? []}
+    stickySubmenu
+    submenuMode="hash"
+    defaultSectionId="greeting"
+    titleBackgroundImage="/images/about/hero-bg.png"
+    immersiveHero
+  />
+
+  <section id="greeting" class="scroll-mt-28 py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">{company.greeting.title}</h2>
+      <div class="mx-auto mt-8 max-w-6xl">
+        <div class="space-y-6 text-left text-base leading-relaxed text-gray-700 break-keep md:text-lg lg:text-xl">
+          {company.greeting.paragraphs.map((p) => <p>{p}</p>)}
+          <div class="mt-10 flex justify-center md:justify-end">
+            <div class="flex items-end gap-4 md:gap-6">
+              <div class="space-y-2 pb-1 text-right">
+                <p class="text-lg font-semibold text-navy md:text-xl">{company.greeting.signature}</p>
+                <img
+                  src="/images/ceo-signature.png"
+                  alt="대표이사 서명"
+                  class="ml-auto h-8 w-auto object-contain md:h-9"
+                  loading="lazy"
+                  width="120"
+                  height="36"
+                />
+              </div>
+              <img
+                src="/images/about/ceo-photo.png"
+                alt="대표 사진"
+                class="h-40 w-auto rounded object-contain md:h-48"
+                loading="lazy"
+                width="142"
+                height="189"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="overview" class="scroll-mt-28">
+    <div class="mx-auto max-w-7xl px-4 pt-12 lg:px-8 lg:pt-16">
+      <h2 class="text-2xl font-bold text-navy md:text-3xl">회사 개요</h2>
+    </div>
+
+    <OverviewBanner />
+
+    <div class="mx-auto max-w-7xl px-4 pb-12 lg:px-8 lg:pb-16">
+      <div class="py-10 lg:py-12">
+        <p class="max-w-4xl text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem] lg:leading-tight">
+          1994년부터 이어온 ‘환경보전과 인간존중’의 정신은 승민종합건설(주)이 지켜온 가장 중요한 가치입니다.
+        </p>
+        <div class="mt-8 max-w-4xl space-y-4 text-sm leading-relaxed text-gray-900 md:text-base">
+          <p>
+            승민종합건설(주)는 단순히 건축물을 완성하는 것을 넘어, 사람이 머무는 공간의 가치와 도시의 미래를 함께
+            고민합니다. 사용자와 고객의 삶을 우선으로 생각하며,{' '}
+            <span class="font-bold text-[#38bdf8]">오랜 경험과 기술력</span>을 바탕으로 최고의 품질과 완성도 높은
+            시공을 추구하고 있습니다.
+          </p>
+          <p>
+            <span class="font-bold text-[#38bdf8]">철저한 품질관리와 책임시공</span>을 통해 고객이 신뢰할 수 있는
+            건축물을 만들고자 끊임없이 노력하고 있으며, 작은 공정 하나에도 정성과 기준을 담은{' '}
+            <span class="font-bold text-[#38bdf8]">명품시공으로 고객만족을 실현</span>하고 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 pt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(240px,36%)] lg:items-center lg:gap-10 xl:gap-14">
+        <div class="min-w-0">
+          <p class="text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem] lg:leading-tight">
+            다양한 부동산 개발·시행 프로젝트 경험
+          </p>
+          <p class="mt-8 text-sm leading-relaxed text-gray-900 md:text-base">
+            승민종합건설(주)는 관계 법인과의 유기적인 협업을 통해{' '}
+            <span class="font-bold text-[#38bdf8]">다양한 시행 및 개발 프로젝트</span>를 성공적으로 수행해 왔습니다.{' '}
+            <span class="font-bold text-[#38bdf8]">축적된 경험과 전문성</span>을 바탕으로{' '}
+            <span class="font-bold text-[#38bdf8]">입지 분석</span>,{' '}
+            <span class="font-bold text-[#38bdf8]">설계 방향 수립</span>,{' '}
+            <span class="font-bold text-[#38bdf8]">설계 검토</span> 등 개발 초기 단계부터 체계적으로 접근하여{' '}
+            <span class="font-bold text-[#38bdf8]">고객 자산의 가치를 높이는</span> 최적의 방향을 제시합니다.
+          </p>
+        </div>
+        <figure class="mt-10 lg:mt-0">
+          <img
+            src="/images/overview-development.png"
+            alt="부동산 개발·시행 프로젝트 단계 안내 도식"
+            class="w-full object-contain"
+            loading="lazy"
+            width="640"
+            height="640"
+          />
+        </figure>
+      </div>
+
+      <div class="mt-12 border-t border-gray-200 pt-12 lg:grid lg:grid-cols-[minmax(240px,36%)_minmax(0,1fr)] lg:items-center lg:gap-10 xl:gap-14">
+        <figure class="mb-10 lg:mb-0">
+          <img
+            src="/images/overview-management.png"
+            alt="임대차 계약 및 건물 종합관리"
+            class="w-full object-contain"
+            loading="lazy"
+            width="640"
+            height="480"
+          />
+        </figure>
+        <div class="min-w-0">
+          <p class="text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem] lg:leading-tight">
+            임대차 계약부터 건물 종합관리까지
+          </p>
+          <p class="mt-8 text-sm leading-relaxed text-gray-900 md:text-base">
+            승민종합건설(주)는 관계 법인과의 유기적인 협업을 통해 준공 이후의 부동산 운영관리까지 체계적으로
+            수행하고 있습니다.{' '}
+            <span class="font-bold text-[#38bdf8]">임대차 계약관리</span>,{' '}
+            <span class="font-bold text-[#38bdf8]">공실관리</span>,{' '}
+            <span class="font-bold text-[#38bdf8]">건물 하자보수</span>,{' '}
+            <span class="font-bold text-[#38bdf8]">경비 및 미화관리</span> 등 건물 관리 전반을 아우르는 통합
+            관리 서비스를 제공하며,{' '}
+            <span class="font-bold text-[#38bdf8]">고객 자산의 안정적인 운영과 지속적인 가치 유지</span>를 위해
+            노력하고 있습니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="history" class="scroll-mt-28 py-16">
+    <div class="mx-auto max-w-4xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">연혁</h2>
+      <div class="relative mt-10">
+        <div
+          class="absolute bottom-0 left-[6.5rem] top-0 hidden w-px bg-gray-200 sm:block"
+          aria-hidden="true"
+        >
+        </div>
+        <ol class="divide-y divide-gray-200">
+          {
+            company.history.map((entry) => (
+              <li class="grid grid-cols-1 gap-3 py-8 first:pt-0 sm:grid-cols-[5.5rem_2rem_1fr] sm:gap-x-0">
+                <p class="text-3xl font-bold tabular-nums text-emerald-600 sm:text-4xl">{entry.year}</p>
+                <div class="hidden items-start justify-center sm:flex sm:pt-2" aria-hidden="true">
+                  <span class="relative z-10 h-3 w-3 shrink-0 rounded-full bg-emerald-600 ring-4 ring-white" />
+                </div>
+                <ul class="space-y-2 text-sm leading-relaxed text-gray-800 sm:pl-2 md:text-base">
+                  {entry.items.map((line) => (
+                    <li>{line}</li>
+                  ))}
+                </ul>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section id="organization" class="scroll-mt-28 bg-gray-50 py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">{company.organization.title}</h2>
+      <div class="mt-10 overflow-hidden rounded-lg border border-gray-200 bg-white">
+        {
+          company.organization.chartImage ? (
+            <img
+              src={company.organization.chartImage}
+              alt="승민종합건설(주) 조직도"
+              class="w-full object-contain"
+              loading="lazy"
+              width="1200"
+              height="800"
+            />
+          ) : (
+            <div class="flex min-h-[280px] flex-col items-center justify-center px-6 py-16 text-center text-gray-500">
+              <p class="text-sm">조직도 이미지를 준비 중입니다.</p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section data-submenu-parent="overview" class="bg-gray-50 py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">사업분야</h2>
+      <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          company.businessAreas.map((area) => (
+            <div class="rounded-lg bg-white p-6 shadow-sm">
+              <h3 class="font-bold text-navy">{area.title}</h3>
+              <p class="mt-2 text-sm text-gray-600">{area.description}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section id="location" class="scroll-mt-28 bg-navy py-16 text-white">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold">오시는 길</h2>
+      <p class="mt-4 text-white/80">{company.address}</p>
+      <p class="mt-2 text-white/80">Tel. {company.tel} | Fax. {company.fax}</p>
+      <div class="mt-8 overflow-hidden rounded-lg bg-white">
+        <NaverMap
+          lat={company.mapLat}
+          lng={company.mapLng}
+          zoom={company.mapZoom}
+          address={company.address}
+        />
+        <p class="border-t border-gray-100 bg-gray-50 px-4 py-2 text-right text-xs text-gray-500">
+          <a
+            href={company.mapSearchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-medium text-navy transition hover:text-[#38bdf8]"
+          >
+            네이버 지도에서 크게 보기 →
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

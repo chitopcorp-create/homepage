@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import projectsData from '@/data/projects.json';
+import { resolveProjectImage } from '@/lib/projectImage';
+
+export function getStaticPaths() {
+  return projectsData.projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { src: displayImage, isPlaceholder } = resolveProjectImage(project.image);
+---
+
+<BaseLayout title={project.title} description={project.summary}>
+  <article>
+    <div class="relative h-[50vh] min-h-[320px] bg-navy">
+      <img
+        src={displayImage}
+        alt={project.title}
+        class:list={[
+          'h-full w-full',
+          isPlaceholder ? 'object-contain bg-navy p-16 opacity-95' : 'object-cover opacity-80',
+        ]}
+        width="1200"
+        height="600"
+        data-project-hero-img
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-navy to-transparent"></div>
+      <div class="absolute bottom-0 left-0 right-0 mx-auto max-w-7xl px-4 pb-12 text-white lg:px-8">
+        <span class="rounded bg-gold/90 px-2 py-1 text-xs font-medium text-navy">{project.category}</span>
+        <h1 class="mt-4 text-3xl font-bold md:text-4xl">{project.title}</h1>
+        <p class="mt-2 text-white/80">{project.year} · {project.location} · {project.scale}</p>
+      </div>
+    </div>
+
+    <div class="mx-auto max-w-3xl px-4 py-16 lg:px-8">
+      <p class="text-lg font-medium text-navy">{project.summary}</p>
+      <div class="mt-8 whitespace-pre-line leading-relaxed text-gray-600">
+        {project.description}
+      </div>
+      <a
+        href={`/projects?category=${encodeURIComponent(project.category)}`}
+        class="mt-12 inline-flex items-center text-sm font-semibold text-gold transition hover:underline"
+      >
+        ← {project.category} 목록
+      </a>
+    </div>
+  </article>
+</BaseLayout>
+
+<script>
+  import { projectPlaceholderImage } from '@/lib/projectImage';
+
+  const heroImg = document.querySelector<HTMLImageElement>('[data-project-hero-img]');
+  heroImg?.addEventListener('error', () => {
+    if (heroImg.dataset.fallbackApplied === 'true') return;
+    heroImg.dataset.fallbackApplied = 'true';
+    heroImg.src = projectPlaceholderImage;
+    heroImg.classList.remove('object-cover', 'opacity-80');
+    heroImg.classList.add('object-contain', 'p-16', 'opacity-95');
+  });
+</script>

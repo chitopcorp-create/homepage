@@ -1,0 +1,66 @@
+---
+import { resolveProjectImage } from '@/lib/projectImage';
+
+interface Props {
+  slug: string;
+  title: string;
+  category: string;
+  location: string;
+  year: string;
+  summary: string;
+  image?: string;
+}
+
+const { slug, title, category, location, year, summary, image } = Astro.props;
+const { src: displayImage, isPlaceholder } = resolveProjectImage(image);
+---
+
+<article
+  class="project-card group flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-md transition hover:shadow-xl"
+>
+  <a href={`/projects/${slug}`} class="flex h-full min-h-0 flex-col">
+    <div class="relative aspect-square shrink-0 overflow-hidden bg-gray-100">
+      <img
+        src={displayImage}
+        alt={isPlaceholder ? `${title} (이미지 없음)` : title}
+        class:list={[
+          'h-full w-full transition duration-500',
+          isPlaceholder
+            ? 'object-contain bg-white p-10'
+            : 'object-cover group-hover:scale-105',
+        ]}
+        loading="lazy"
+        width="400"
+        height="400"
+        data-project-img
+      />
+      <span class="absolute left-3 top-3 rounded bg-navy/80 px-2 py-1 text-xs font-medium text-white">
+        {category}
+      </span>
+    </div>
+    <div class="flex min-h-[11.5rem] flex-1 flex-col p-5">
+      <p class="shrink-0 text-xs text-gray-500">{year} · {location}</p>
+      <h3 class="mt-1 line-clamp-2 min-h-[3.25rem] text-lg font-bold leading-snug text-navy transition group-hover:text-[#38bdf8]">
+        {title}
+      </h3>
+      <p class="mt-2 line-clamp-2 min-h-[2.5rem] text-sm leading-relaxed text-gray-600">{summary}</p>
+      <span class="mt-auto inline-flex items-center pt-4 text-sm font-medium text-gold">
+        자세히 보기 →
+      </span>
+    </div>
+  </a>
+</article>
+
+<script>
+  import { projectPlaceholderImage } from '@/lib/projectImage';
+
+  document.querySelectorAll<HTMLImageElement>('img[data-project-img]').forEach((img) => {
+    img.addEventListener('error', () => {
+      if (img.dataset.fallbackApplied === 'true') return;
+      img.dataset.fallbackApplied = 'true';
+      img.src = projectPlaceholderImage;
+      img.classList.remove('object-cover', 'group-hover:scale-105');
+      img.classList.add('object-contain', 'bg-white', 'p-10');
+    });
+  });
+</script>

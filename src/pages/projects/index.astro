@@ -1,0 +1,173 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import projectsData from '@/data/projects.json';
+import navigation from '@/data/navigation.json';
+
+const { categories } = projectsData;
+
+const hasProjectPhoto = (image?: string) => Boolean(image?.trim());
+
+const projects = [...projectsData.projects].sort((a, b) => {
+  const yearDiff = Number(b.year) - Number(a.year);
+  if (yearDiff !== 0) return yearDiff;
+  return Number(hasProjectPhoto(b.image)) - Number(hasProjectPhoto(a.image));
+});
+const projectsMenu = navigation.items.find((item) => item.label === '사업실적');
+---
+
+<BaseLayout title="사업실적" description="승민종합건설(주) 사업실적 - 건축, 토목, 종합건설" tabHero>
+  <PageHero
+    title="사업실적"
+    submenus={projectsMenu?.children ?? []}
+    stickySubmenu
+    submenuMode="query"
+    titleBackgroundImage="/images/projects/hero-bg.png"
+    immersiveHero
+  />
+
+  <section class="py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <div class="flex flex-wrap gap-2" role="tablist" aria-label="실적 카테고리">
+        {
+          categories.map((cat, i) => (
+            <button
+              type="button"
+              class="filter-btn rounded-full border border-gray-200 px-5 py-2 text-sm font-medium transition hover:border-navy hover:text-navy"
+              data-category={cat}
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              class:list={[i === 0 && 'bg-navy text-white border-navy']}
+            >
+              {cat}
+            </button>
+          ))
+        }
+      </div>
+
+      <div id="projects-grid" class="mt-10 grid auto-rows-fr items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          projects.map((project) => (
+            <div data-category={project.category} class="project-item h-full min-h-0">
+              <ProjectCard {...project} />
+            </div>
+          ))
+        }
+      </div>
+
+      <p id="no-results" class="mt-10 hidden text-center text-gray-500">
+        해당 카테고리의 실적이 없습니다.
+      </p>
+
+      <div class="mt-10 text-center">
+        <button
+          id="view-more-btn"
+          type="button"
+          class="hidden min-w-[200px] border-2 border-navy px-10 py-3 text-sm font-semibold tracking-[0.2em] text-navy transition hover:bg-navy hover:text-white"
+        >
+          VIEW MORE
+        </button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const PAGE_SIZE = 6;
+  const buttons = document.querySelectorAll('.filter-btn');
+  const items = Array.from(document.querySelectorAll('.project-item')) as HTMLElement[];
+  const noResults = document.getElementById('no-results');
+  const viewMoreBtn = document.getElementById('view-more-btn');
+
+  let currentCategory = '전체';
+  let isExpanded = false;
+
+  const syncSubmenuHighlight = (category: string) => {
+    document.querySelectorAll<HTMLAnchorElement>('[data-submenu-link]').forEach((link) => {
+      const parsed = new URL(link.href, window.location.origin);
+      const linkCategory = parsed.searchParams.get('category') ?? '전체';
+      const active = linkCategory === category;
+      link.classList.toggle('border-[#38bdf8]', active);
+      link.classList.toggle('text-[#38bdf8]', active);
+      link.classList.toggle('text-gray-500', !active);
+    });
+  };
+
+  const applyFilter = (category: string, expand = false, syncUrl = true) => {
+    if (category !== currentCategory) {
+      currentCategory = category;
+      isExpanded = false;
+    }
+    if (expand) isExpanded = true;
+
+    if (syncUrl) {
+      const path = window.location.pathname;
+      const nextUrl =
+        category === '전체'
+          ? path
+          : `${path}?category=${encodeURIComponent(category)}`;
+      const currentUrl = `${path}${window.location.search}`;
+      if (currentUrl !== nextUrl) {
+        history.replaceState(null, '', nextUrl);
+      }
+      syncSubmenuHighlight(category);
+    }
+
+    buttons.forEach((b) => {
+      const active = b.getAttribute('data-category') === category;
+      b.setAttribute('aria-pressed', String(active));
+      b.classList.toggle('bg-navy', active);
+      b.classList.toggle('text-white', active);
+      b.classList.toggle('border-navy', active);
+    });
+
+    const matching: HTMLElement[] = [];
+    items.forEach((item) => {
+      const itemCat = item.getAttribute('data-category');
+      const match = category === '전체' || itemCat === category;
+      if (match) matching.push(item);
+      else item.style.display = 'none';
+    });
+
+    matching.forEach((item, index) => {
+      const show = isExpanded || index < PAGE_SIZE;
+      item.style.display = show ? '' : 'none';
+    });
+
+    const needsViewMore = matching.length > PAGE_SIZE;
+    viewMoreBtn?.classList.toggle('hidden', !needsViewMore || isExpanded);
+    viewMoreBtn?.setAttribute('aria-expanded', String(isExpanded));
+    noResults?.classList.toggle('hidden', matching.length > 0);
+  };
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyFilter(btn.getAttribute('data-category') ?? '전체');
+    });
+  });
+
+  viewMoreBtn?.addEventListener('click', () => {
+    applyFilter(currentCategory, true);
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const urlCategory = params.get('category');
+  if (urlCategory) {
+    const decoded = decodeURIComponent(urlCategory);
+    const hasButton = Array.from(buttons).some(
+      (b) => b.getAttribute('data-category') === decoded
+    );
+    if (hasButton) {
+      applyFilter(decoded);
+    } else {
+      applyFilter('전체');
+    }
+  } else {
+    applyFilter('전체');
+  }
+
+  window.addEventListener('page-submenu-query', (event) => {
+    const category = (event as CustomEvent<{ category: string }>).detail?.category ?? '전체';
+    applyFilter(category, false, false);
+  });
+</script>

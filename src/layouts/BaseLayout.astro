@@ -1,0 +1,76 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import NoticePopup from '@/components/NoticePopup.astro';
+import site from '@/data/site.json';
+import company from '@/data/company.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  /** 메인 영상 풀스크린 시 상단 여백 제외 */
+  fullBleedHero?: boolean;
+  /** PageHero 고정 탭(제목+소메뉴) 페이지 — main 상단 여백은 PageHero가 처리 */
+  tabHero?: boolean;
+}
+
+const { title, description, ogImage = company.logo, fullBleedHero = false, tabHero = false } =
+  Astro.props;
+const pageTitle = title ? `${title} | ${site.siteName}` : site.siteName;
+const pageDescription = description ?? site.defaultDescription;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? site.siteUrl);
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={pageDescription} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site ?? site.siteUrl)} />
+    <meta property="og:locale" content="ko_KR" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>{pageTitle}</title>
+    {
+      tabHero && (
+        <script is:inline>
+          {`(function(){if(location.hash){history.scrollRestoration='manual';}})();`}
+        </script>
+      )
+    }
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-gold focus:text-navy focus:px-4 focus:py-2 focus:rounded"
+    >
+      본문 바로가기
+    </a>
+    <Header />
+    <main
+      id="main-content"
+      class:list={[
+        'flex-1',
+        !fullBleedHero && !tabHero && 'pt-[var(--site-header-height,5.5rem)]',
+      ]}
+    >
+      <slot />
+    </main>
+    <Footer />
+    <NoticePopup />
+  </body>
+</html>

@@ -1,0 +1,108 @@
+---
+import newsData from '@/data/news.json';
+
+const companyName = '승민종합건설(주)';
+const downloadFile = newsData.downloads[0];
+
+const formatBoldCompany = (text: string) => {
+  const parts = text.split(companyName);
+  if (parts.length === 1) return text;
+  return parts
+    .map((part, i) => (i === 0 ? part : `<strong class="font-extrabold">${companyName}</strong>${part}`))
+    .join('');
+};
+
+const bodyText =
+  '승민종합건설(주)는 1994년부터 이어온 “환경보전과 인간존중”의 정신과 오랜 시간 축적해 온 시공 기술력을 바탕으로, 명품시공과 책임준공을 실현해 왔습니다. 또한 시행, 임대, 건물종합관리 등 다양한 부동산 실무 경험을 통해 고객이 미처 예상하지 못한 부분까지 선제적으로 제안하고, 고객의 요구에는 신속하고 책임 있게 대응함으로써 진정한 고객감동을 실현해 나가겠습니다.';
+---
+
+<div class="proposal-section">
+  <figure class="proposal-hero mx-auto w-full max-w-[min(96vw,72rem)]">
+    <div class="proposal-hero__frame relative mx-auto overflow-hidden rounded-sm shadow-lg">
+      <img
+        src="/images/media/proposal-hero.png"
+        alt="악수하는 사업 제안 상담 장면"
+        class="block h-full w-full object-cover"
+        width="1680"
+        height="720"
+        loading="lazy"
+      />
+      <div class="proposal-hero__overlay" aria-hidden="true"></div>
+      <figcaption class="proposal-hero__caption">
+        <p class="proposal-hero__quote">“고객만족을 넘어 고객감동으로”</p>
+      </figcaption>
+    </div>
+  </figure>
+
+  <p
+    class="proposal-section__body mx-auto mt-10 max-w-4xl text-lg font-bold leading-[1.85] text-gray-900 md:mt-12 md:text-xl"
+    set:html={formatBoldCompany(bodyText)}
+  />
+
+  {
+    downloadFile && (
+      <div class="proposal-section__download mx-auto mt-10 max-w-4xl md:mt-12">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p class="font-semibold text-navy">{downloadFile.title}</p>
+            <p class="mt-1 text-sm text-gray-500">
+              {downloadFile.description}
+              {downloadFile.size ? ` · ${downloadFile.size}` : ''}
+            </p>
+          </div>
+          <a
+            href={downloadFile.url}
+            class="inline-flex shrink-0 items-center justify-center rounded bg-navy px-4 py-2 text-sm font-medium text-white transition hover:bg-navy-light"
+            download
+          >
+            다운로드
+          </a>
+        </div>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .proposal-hero__frame {
+    aspect-ratio: 21 / 9;
+    width: 100%;
+    max-height: min(38vh, 18rem);
+  }
+
+  @media (min-width: 768px) {
+    .proposal-hero__frame {
+      max-height: min(40vh, 22rem);
+    }
+  }
+
+  .proposal-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(15, 31, 61, 0.12) 0%,
+      rgba(15, 31, 61, 0.42) 55%,
+      rgba(15, 31, 61, 0.52) 100%
+    );
+  }
+
+  .proposal-hero__caption {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .proposal-hero__quote {
+    margin: 0;
+    font-size: clamp(1.25rem, 3.5vw, 2rem);
+    font-weight: 700;
+    line-height: 1.45;
+    color: #fff;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+  }
+</style>

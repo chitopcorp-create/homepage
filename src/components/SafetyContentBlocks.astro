@@ -1,0 +1,75 @@
+---
+const companyName = '승민종합건설(주)';
+
+const formatBoldCompany = (text: string) => {
+  const parts = text.split(companyName);
+  if (parts.length === 1) return text;
+  return parts
+    .map((part, i) => (i === 0 ? part : `<strong class="font-extrabold">${companyName}</strong>${part}`))
+    .join('');
+};
+
+const systemText =
+  '승민종합건설(주)은 체계적이고 선제적인 안전보건 관리체계를 구축하여 빈틈없는 현장 안전관리를 실천하고, 지속적인 점검과 개선을 통해 안전보건 수준을 끊임없이 향상시켜 나가겠습니다.';
+
+const policyItems = [
+  '전 현장 임직원은 매일 TBM과 정기 안전교육을 실시하여 작업 전 위험요인을 사전에 공유하고 예방하겠습니다.',
+  '기술부 임원은 매주 1회 별도의 안전보건 정기점검을 실시하여 현장의 위험요소를 지속적으로 확인하고 개선하겠습니다.',
+  '대표이사는 매월 1회 현장 합동 정기점검을 실시하여 경영진이 직접 안전보건 관리에 참여하고 책임을 다하겠습니다.',
+  '스마트 안전기술을 적극 도입하여 모든 현장의 안전상황을 실시간으로 관리하고, 보다 신속하고 체계적인 대응체계를 구축하겠습니다.',
+  '날씨, 계절, 공정, 작업환경 등 현장에 영향을 미치는 다양한 요소를 사전에 분석하여 유해·위험요인을 선제적으로 제거하겠습니다.',
+];
+---
+
+<div class="safety-content mx-auto max-w-7xl px-4 lg:px-8">
+  <section class="safety-content__block pb-14 md:pb-20 lg:pb-24">
+    <div class="safety-content__row grid gap-4 md:grid-cols-[12rem_1fr] md:items-start md:gap-10 lg:grid-cols-[14rem_1fr]">
+      <h3 class="text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem]">
+        안전보건<br class="hidden sm:block" />경영방침
+      </h3>
+      <div class="space-y-6 text-lg font-bold leading-[1.85] text-gray-900 md:space-y-7 md:text-xl">
+        <p set:html={formatBoldCompany('승민종합건설(주) 대표이사 및 임직원 일동은 모든 근로자의 생명과 안전을 최우선 가치로 삼고, 안전하고 건강한 건설현장 조성을 위해 최선을 다하겠습니다.')} />
+
+        <p set:html={formatBoldCompany('우리는 근로자 한 사람 한 사람이 단순한 현장의 구성원이 아니라, 소중한 가족의 품으로 건강하게 돌아가야 할 귀중한 존재임을 깊이 인식하고 있습니다. 이에 승민종합건설(주)은 체계적인 안전보건 관리체계를 구축하고, 전 임직원이 함께 실천하는 예방 중심의 안전문화를 정착시켜 중대재해 ZERO 목표를 반드시 달성하겠습니다.')} />
+
+        <p>이를 위해 다음과 같은 안전보건 방침을 수립하고 성실히 이행하겠습니다.</p>
+
+        <ol class="list-decimal space-y-4 pl-6 marker:font-bold">
+          {policyItems.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ol>
+
+        <p set:html={formatBoldCompany('승민종합건설(주)은 안전을 비용이 아닌 가장 중요한 책임이자 약속으로 여기며, 모든 근로자가 안심하고 일할 수 있는 현장을 만들기 위해 지속적으로 노력하겠습니다.')} />
+
+        <p class="pt-2 text-center md:text-right">승민종합건설(주) 대표이사 및 임직원 일동</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="safety-content__divider border-0 border-t border-gray-200/90" aria-hidden="true" />
+
+  <section class="safety-content__block pt-14 md:pt-20 lg:pt-24">
+    <div class="safety-content__row grid gap-4 md:grid-cols-[12rem_1fr] md:items-start md:gap-10 lg:grid-cols-[14rem_1fr]">
+      <h3 class="text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem]">
+        안전보건<br class="hidden sm:block" />시스템 구축
+      </h3>
+      <div class="space-y-8 md:space-y-10">
+        <p
+          class="text-lg font-bold leading-[1.85] text-gray-900 md:text-xl"
+          set:html={formatBoldCompany(systemText)}
+        />
+        <figure class="-mx-4 lg:mx-0">
+          <img
+            src="/images/sustainability/safety-pdca.png"
+            alt="안전보건 PDCA 체계: Plan 위험성평가, Do 교육관리, Check 성과측정, Act 비상대응"
+            class="mx-auto h-auto w-full max-w-3xl"
+            width="900"
+            height="900"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+    </div>
+  </section>
+</div>

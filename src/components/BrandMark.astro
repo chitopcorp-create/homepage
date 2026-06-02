@@ -1,0 +1,148 @@
+---
+import company from '@/data/company.json';
+
+interface Props {
+  variant?: 'header' | 'footer';
+}
+
+const { variant = 'header' } = Astro.props;
+const isFooter = variant === 'footer';
+
+const nameMainClass = isFooter
+  ? 'text-xl sm:text-[1.65rem]'
+  : 'text-lg sm:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
+const enClass = isFooter
+  ? 'text-[9px] sm:text-[10px]'
+  : 'text-[8px] sm:text-[9px] lg:text-[10px]';
+
+const logoHeightPx = isFooter ? 88 : 82;
+const textRatio = 0.75;
+
+const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' ').trim();
+---
+
+<div
+  class:list={[
+    'brand-mark flex items-center',
+    isFooter ? 'gap-4 sm:flex-row' : 'gap-3 lg:gap-4',
+    isFooter && 'flex-col sm:flex-row sm:items-center',
+  ]}
+  data-brand-mark
+  data-logo-height={logoHeightPx}
+  data-text-ratio={textRatio}
+>
+  <div class="brand-logo-shell flex shrink-0 items-center justify-center">
+    <img
+      src={company.logo}
+      alt={`${company.name} 로고`}
+      class="brand-logo h-full w-auto max-w-none object-contain object-left"
+      width="160"
+      height="56"
+    />
+  </div>
+
+  <div class="brand-text inline-flex flex-col items-stretch" data-brand-text>
+    <div class="brand-name-row whitespace-nowrap leading-none" data-brand-name-ref>
+      <span class:list={['brand-name-main font-bmhanna font-bold text-navy', nameMainClass]}>
+        {company.nameMain}
+      </span>
+      <span
+        class:list={['brand-name-suffix font-bmhanna font-bold text-navy', nameMainClass]}
+        style="letter-spacing: -0.12em"
+      >
+        {company.nameSuffix}
+      </span>
+    </div>
+    <p
+      class:list={[
+        'brand-en mt-1.5 block w-full whitespace-nowrap font-semibold uppercase leading-none text-navy',
+        enClass,
+      ]}
+      data-brand-en
+      data-en-text={enLine}
+      data-en-base={isFooter ? '10' : '9'}
+    >
+      {enLine}
+    </p>
+  </div>
+</div>
+
+<script>
+  const fitEnglishLine = (el: HTMLElement, targetWidth: number, basePx: number) => {
+    const text = el.dataset.enText ?? el.textContent ?? '';
+    el.textContent = text;
+    el.style.width = `${targetWidth}px`;
+    el.style.letterSpacing = '0px';
+    el.style.fontSize = `${basePx}px`;
+
+    if (el.scrollWidth <= targetWidth) {
+      let lo = 0;
+      let hi = 0.4;
+      for (let i = 0; i < 16; i++) {
+        const mid = (lo + hi) / 2;
+        el.style.letterSpacing = `${mid}em`;
+        if (el.scrollWidth <= targetWidth) lo = mid;
+        else hi = mid;
+      }
+      el.style.letterSpacing = `${lo}em`;
+      return;
+    }
+
+    let size = basePx;
+    while (size > 6 && el.scrollWidth > targetWidth) {
+      size -= 0.25;
+      el.style.fontSize = `${size}px`;
+      el.style.letterSpacing = '0px';
+    }
+
+    let lo = 0;
+    let hi = 0.4;
+    for (let i = 0; i < 16; i++) {
+      const mid = (lo + hi) / 2;
+      el.style.letterSpacing = `${mid}em`;
+      if (el.scrollWidth <= targetWidth) lo = mid;
+      else hi = mid;
+    }
+    el.style.letterSpacing = `${lo}em`;
+  };
+
+  const syncBrandLayout = () => {
+    document.querySelectorAll('[data-brand-mark]').forEach((mark) => {
+      const ref = mark.querySelector('[data-brand-name-ref]') as HTMLElement | null;
+      const textBlock = mark.querySelector('[data-brand-text]') as HTMLElement | null;
+      const en = mark.querySelector('[data-brand-en]') as HTMLElement | null;
+      const logoShell = mark.querySelector('.brand-logo-shell') as HTMLElement | null;
+      const logo = mark.querySelector('.brand-logo') as HTMLImageElement | null;
+
+      if (!ref || !en || !textBlock) return;
+
+      const logoHeight = Number(mark.dataset.logoHeight ?? 104);
+      const maxTextHeight = logoHeight * Number(mark.dataset.textRatio ?? 0.75);
+      const basePx = Number(en.dataset.enBase ?? 9);
+
+      textBlock.style.width = `${ref.offsetWidth}px`;
+      textBlock.style.transform = '';
+      fitEnglishLine(en, ref.offsetWidth, basePx);
+
+      const textHeight = textBlock.offsetHeight;
+      if (textHeight > maxTextHeight && textHeight > 0) {
+        const scale = maxTextHeight / textHeight;
+        textBlock.style.transform = `scale(${scale})`;
+        textBlock.style.transformOrigin = 'left center';
+      }
+
+      if (logoShell && logo) {
+        logoShell.style.height = `${logoHeight}px`;
+        logo.style.height = '100%';
+        logo.style.width = 'auto';
+      }
+    });
+  };
+
+  syncBrandLayout();
+  window.addEventListener('resize', syncBrandLayout);
+  document.addEventListener('astro:page-load', syncBrandLayout);
+  if (document.fonts?.ready) {
+    document.fonts.ready.then(syncBrandLayout);
+  }
+</script>

@@ -1,0 +1,216 @@
+---
+import EnvironmentGreenSiteCard from '@/components/EnvironmentGreenSiteCard.astro';
+
+const companyName = '승민종합건설(주)';
+
+const formatBoldCompany = (text: string) => {
+  const parts = text.split(companyName);
+  if (parts.length === 1) return text;
+  return parts
+    .map((part, i) => (i === 0 ? part : `<strong class="font-extrabold">${companyName}</strong>${part}`))
+    .join('');
+};
+
+const introText =
+  '승민종합건설(주)는 1994년부터 이어온 “환경보전과 인간존중”의 정신을 계승하여, 임직원 모두가 환경·안전·보건 중심의 ESH(Environment, Safety, Health) 경영을 적극 실천하고, 건설현장에서는 자연친화적 시공과 자원순환형 현장 운영을 통해 사람과 자연이 조화롭게 공존하는 지속가능한 건설문화를 만들어가겠습니다.';
+
+const practiceText =
+  '승민종합건설(주)는 자연친화적 자재와 순환골재의 사용을 확대하고, 에너지 절약형 건축물 시공을 실천함으로써 환경오염을 사전에 예방하며, 지속적인 환경개선 활동을 통해 지속가능한 친환경 건설문화를 만들어가겠습니다.';
+
+const greenSiteCards = [
+  {
+    slides: [
+      {
+        src: '/images/sustainability/environment-site/building.png',
+        alt: '녹색건축·에너지효율등급 인증 대정타워 건축 조감도',
+        objectFit: 'cover' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site/green-building-cert.png',
+        alt: '대정타워 녹색건축 인증서 (일반 그린4등급)',
+        objectFit: 'contain' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site/energy-efficiency-cert.png',
+        alt: '길동 412-9 의료시설 신축공사 건축물 에너지효율등급 인증서 (1++등급)',
+        objectFit: 'contain' as const,
+      },
+    ],
+    labels: ['녹색건축(일반(그린4등급))', '에너지효율등급(1++)'],
+  },
+  {
+    slides: [
+      {
+        src: '/images/sustainability/environment-site-2/01-building.png',
+        alt: 'SM엘루이 주상복합 건축 조감도',
+        objectFit: 'cover' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-2/02-green-cert.png',
+        alt: 'SM엘루이 주상복합 녹색건축인증 (우수 그린2등급)',
+        objectFit: 'contain' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-2/03-green-cert-detail.png',
+        alt: 'SM엘루이 주상복합 녹색건축 인증서',
+        objectFit: 'contain' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-2/04-energy-1plus.png',
+        alt: 'SM엘루이 주상복합(비주거) 건축물 에너지효율등급 인증서 (1+등급)',
+        objectFit: 'contain' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-2/05-energy-grade2.png',
+        alt: 'SM엘루이 주상복합(주거) 건축물 에너지효율등급 인증서 (2등급)',
+        objectFit: 'contain' as const,
+      },
+    ],
+    labels: ['녹색건축(우수(그린2등급))', '에너지효율등급(1+,2등급)'],
+  },
+  {
+    slides: [
+      {
+        src: '/images/sustainability/environment-site-3/01-building.png',
+        alt: '길동 413-21번지 오피스텔 건축 조감도',
+        objectFit: 'cover' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-3/02-green-preliminary-cert.png',
+        alt: '길동 413-21번지 오피스텔 녹색건축 예비인증서 (일반 그린4등급)',
+        objectFit: 'contain' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-3/03-energy-1plusplus.png',
+        alt: 'SM엘루이주상복합(비주거) 건축물 에너지효율등급 인증서 (1++등급)',
+        objectFit: 'contain' as const,
+      },
+      {
+        src: '/images/sustainability/environment-site-3/04-energy-grade3.png',
+        alt: 'SM엘루이주상복합(주거) 건축물 에너지효율등급 인증서 (3등급)',
+        objectFit: 'contain' as const,
+      },
+    ],
+    labels: ['녹색건축(일반(그린4등급))', '에너지효율등급(1++,3등급)'],
+  },
+  {
+    slides: [
+      {
+        src: '/images/sustainability/environment-site-4/01-building.png',
+        alt: '강동구 재활용 건축자재·서울형녹색건축 적용 건물 조감도',
+        objectFit: 'cover' as const,
+      },
+    ],
+    labels: [
+      '강동구 최초 재활용 건축자재 적용 건물',
+      '서울형녹색건축 적용 건물',
+      '에너지절약계획 이행 건물',
+    ],
+  },
+];
+---
+
+<div class="environment-content mx-auto max-w-7xl px-4 lg:px-8">
+  <section class="environment-content__block pb-14 md:pb-20 lg:pb-24">
+    <div class="environment-content__row grid gap-4 md:grid-cols-[12rem_1fr] md:items-start md:gap-10 lg:grid-cols-[14rem_1fr]">
+      <h3 class="text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem]">
+        ESH·친환경<br />경영방침
+      </h3>
+      <p
+        class="text-lg font-bold leading-[1.85] text-gray-900 md:text-xl"
+        set:html={formatBoldCompany(introText)}
+      />
+    </div>
+  </section>
+
+  <hr class="environment-content__divider border-0 border-t border-gray-200/90" aria-hidden="true" />
+
+  <section class="environment-content__block pt-14 md:pt-20 lg:pt-24">
+    <div class="environment-content__row grid gap-8 md:grid-cols-[12rem_1fr] md:items-start md:gap-10 lg:grid-cols-[14rem_1fr]">
+      <h3 class="text-2xl font-bold leading-snug text-[#38bdf8] md:text-3xl lg:text-[2rem]">
+        녹색경영<br />도입현장
+      </h3>
+      <div class="space-y-8 md:space-y-10">
+        <p
+          class="text-lg font-bold leading-[1.85] text-gray-900 md:text-xl"
+          set:html={formatBoldCompany(practiceText)}
+        />
+
+        <div class="green-site-cards">
+          {greenSiteCards.map((card) => (
+            <EnvironmentGreenSiteCard slides={card.slides} labels={card.labels} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<style>
+  .green-site-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 11rem));
+    gap: 1rem;
+    align-items: start;
+  }
+
+  @media (min-width: 640px) {
+    .green-site-cards {
+      grid-template-columns: repeat(4, minmax(0, 13rem));
+      gap: 1.5rem;
+    }
+  }
+</style>
+
+<script>
+  const equalizeGreenSiteLabelHeights = () => {
+    document.querySelectorAll('.green-site-cards').forEach((grid) => {
+      const labels = Array.from(grid.querySelectorAll<HTMLElement>('.green-site-card__labels'));
+      if (!labels.length) return;
+
+      labels.forEach((el) => {
+        el.style.minHeight = '';
+      });
+
+      const maxHeight = Math.max(...labels.map((el) => el.getBoundingClientRect().height));
+      if (maxHeight <= 0) return;
+
+      labels.forEach((el) => {
+        el.style.minHeight = `${maxHeight}px`;
+      });
+    });
+  };
+
+  const scheduleGreenSiteLayout = () => {
+    requestAnimationFrame(() => {
+      equalizeGreenSiteLabelHeights();
+    });
+  };
+
+  scheduleGreenSiteLayout();
+  window.addEventListener('resize', scheduleGreenSiteLayout, { passive: true });
+  document.fonts?.ready.then(scheduleGreenSiteLayout);
+
+  document.querySelectorAll('[data-green-site-carousel]').forEach((root) => {
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-green-site-slide]'));
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-green-site-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-green-site-next]');
+    if (!slides.length || !prevBtn || !nextBtn) return;
+
+    let index = 0;
+
+    const showSlide = (next: number) => {
+      index = (next + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle('opacity-100', active);
+        slide.classList.toggle('opacity-0', !active);
+        slide.classList.toggle('pointer-events-none', !active);
+        slide.hidden = !active;
+      });
+    };
+
+    prevBtn.addEventListener('click', () => showSlide(index - 1));
+    nextBtn.addEventListener('click', () => showSlide(index + 1));
+  });
+</script>

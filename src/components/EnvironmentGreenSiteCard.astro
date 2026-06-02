@@ -1,0 +1,82 @@
+---
+export interface GreenSiteSlide {
+  src: string;
+  alt: string;
+  objectFit?: 'cover' | 'contain';
+}
+
+interface Props {
+  slides: GreenSiteSlide[];
+  labels: string[];
+}
+
+const { slides, labels } = Astro.props;
+const showNav = slides.length > 1;
+---
+
+<article
+  class="green-site-card flex w-full flex-col overflow-hidden rounded-lg bg-white shadow-md"
+  data-green-site-carousel
+>
+  <div class="relative aspect-square shrink-0 overflow-hidden bg-gray-100">
+    {
+      slides.map((slide, index) => (
+        <figure
+          class:list={[
+            'green-site-card__slide absolute inset-0 transition-opacity duration-300',
+            index === 0 ? 'opacity-100' : 'pointer-events-none opacity-0',
+          ]}
+          data-green-site-slide
+          hidden={index !== 0}
+        >
+          <img
+            src={slide.src}
+            alt={slide.alt}
+            class:list={[
+              'h-full w-full',
+              (slide.objectFit ?? 'contain') === 'cover'
+                ? 'object-cover'
+                : 'object-contain bg-white p-1.5 sm:p-2',
+            ]}
+            loading={index === 0 ? 'eager' : 'lazy'}
+            width="800"
+            height="800"
+          />
+        </figure>
+      ))
+    }
+    {
+      showNav && (
+        <>
+          <button
+            type="button"
+            class="absolute left-1 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-navy shadow-md transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38bdf8]"
+            data-green-site-prev
+            aria-label="이전 사진"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="absolute right-1 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-navy shadow-md transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38bdf8]"
+            data-green-site-next
+            aria-label="다음 사진"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </>
+      )
+    }
+  </div>
+  <div
+    class="green-site-card__labels flex flex-col justify-center space-y-0.5 p-3 text-center text-xs font-bold leading-snug text-gray-900"
+  >
+    {labels.map((label) => (
+      <p>{label}</p>
+    ))}
+  </div>
+</article>

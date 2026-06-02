@@ -1,0 +1,48 @@
+---
+export interface Pillar {
+  icon: string;
+  title: string;
+  body: string;
+}
+
+interface Props {
+  pillars: Pillar[];
+}
+
+const { pillars } = Astro.props;
+const companyName = '승민종합건설(주)';
+
+const formatBody = (text: string) => {
+  const parts = text.split(companyName);
+  if (parts.length === 1) return text;
+  return parts
+    .map((part, i) =>
+      i === 0 ? part : `<strong class="font-bold text-gray-900">${companyName}</strong>${part}`
+    )
+    .join('');
+};
+---
+
+<ul class="customer-pillars mx-auto grid max-w-7xl list-none gap-10 px-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-0 lg:px-8">
+  {
+    pillars.map((pillar, index) => (
+      <li
+        class:list={[
+          'customer-pillar flex flex-col',
+          index < pillars.length - 1 && 'lg:border-r lg:border-gray-200',
+        ]}
+      >
+        <div class="customer-pillar__head flex items-center gap-3 md:gap-4 lg:px-6">
+          <span class="shrink-0 text-5xl leading-none md:text-6xl" aria-hidden="true">
+            {pillar.icon}
+          </span>
+          <h3 class="text-xl font-bold leading-snug text-[#38bdf8] md:text-2xl">{pillar.title}</h3>
+        </div>
+        <p
+          class="customer-pillar__body mt-5 text-sm leading-[1.85] text-gray-900 md:mt-6 md:text-[0.9375rem] lg:px-6"
+          set:html={formatBody(pillar.body)}
+        />
+      </li>
+    ))
+  }
+</ul>

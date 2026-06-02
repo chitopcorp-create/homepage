@@ -1,0 +1,94 @@
+{
+  "social": [],
+  "downloads": [
+    {
+      "title": "회사소개서 (PDF)",
+      "description": "승민종합건설(주) 회사 개요 및 사업 분야",
+      "url": "/downloads/company-profile.pdf",
+      "size": "22.4MB"
+    }
+  ],
+  "gallery": [
+    { "title": "현장 안전 교육", "image": "/images/gallery/gallery-1.svg" },
+    { "title": "준공 기념식", "image": "/images/gallery/gallery-2.svg" },
+    { "title": "시공 현장", "image": "/images/gallery/gallery-3.svg" }
+  ],
+  "articles": [
+    {
+      "slug": "haegreen-brand-press-2005",
+      "title": "품질로 승부하는 신뢰받는 승민 '해그린' 브랜드",
+      "date": "2005-08-26",
+      "summary": "한국경제 보도 (2005년 8월 26일)",
+      "body": "",
+      "image": "/images/media/press/haegreen-brand-2005.png",
+      "imageAlt": "한국경제 「품질로 승부하는 신뢰받는 승민 해그린 브랜드」 기사"
+    },
+    {
+      "slug": "kpc-grand-prix-2005",
+      "title": "2005 대한민국 전문기업 그랑프리, 그들이 미래다.",
+      "date": "2005-10-13",
+      "summary": "한국일보 특집 (2005년 10월 13일)",
+      "body": "",
+      "images": [
+        {
+          "src": "/images/media/press/kpc-grand-prix-2005.png",
+          "alt": "한국일보 「2005 대한민국 전문기업 그랑프리, 그들이 미래다」 특집"
+        },
+        {
+          "src": "/images/media/press/kpc-grand-prix-2005-2.png",
+          "alt": "한국일보 「중소규모 재건축 고급화 주도」 승민종합건설(주) 관련 기사"
+        }
+      ]
+    },
+    {
+      "slug": "haegreen-brand-press-2005-10-30",
+      "title": "품질로 승부하는 승민종합건설(주) 신뢰받는 브랜드 '해그린'",
+      "date": "2005-10-30",
+      "summary": "North-east Asia Forum (2005년 10월)",
+      "body": "",
+      "images": [
+        {
+          "src": "/images/media/press/haegreen-press-2005-10-30-03.png",
+          "alt": "승민종합건설(주) 「인간과 환경의 조화로운 공간 창조」 소개"
+        },
+        {
+          "src": "/images/media/press/haegreen-press-2005-10-30-04.png",
+          "alt": "North-east Asia Forum 「품질로 승부하는 승민종합건설(주) 신뢰받는 브랜드 해그린」 (63면)"
+        },
+        {
+          "src": "/images/media/press/haegreen-press-2005-10-30-02.png",
+          "alt": "North-east Asia Forum SM해그린·목원연립주택 재건축 관련 기사 (64면)"
+        },
+        {
+          "src": "/images/media/press/haegreen-press-2005-10-30-01.png",
+          "alt": "North-east Asia Forum 「현실과 맞는 건설 정책이 필요」 (65면)"
+        }
+      ]
+    },
+    {
+      "slug": "sm-ellui-sinjeong-2007",
+      "title": "신정동에 고급 주상복합 'SM ELLUI'",
+      "date": "2007-08-30",
+      "summary": "한국경제 보도 (2007년 8월 30일)",
+      "body": "",
+      "image": "/images/media/press/sm-ellui-sinjeong-2007.png",
+      "imageAlt": "한국경제 「신정동에 고급 주상복합 SM ELLUI」 기사"
+    },
+    {
+      "slug": "cak-seoul-dev-committee-2021",
+      "title": "건협 서울시회, 개발사업위원회 1차 회의 개최",
+      "date": "2021-04-05",
+      "summary": "대한경제 보도 (2021년 4월 5일)",
+      "body": "",
+      "image": "/images/media/press/cak-seoul-dev-committee-2021.png",
+      "imageAlt": "대한경제 「건협 서울시회, 개발사업위원회 1차 회의 개최」 기사"
+    },
+    {
+      "slug": "website-open",
+      "title": "승민종합건설(주) 공식 홈페이지 오픈",
+      "date": "2026-05-28",
+      "summary": "승민종합건설(주) 공식 홈페이지를 새롭게 오픈하였습니다.",
+      "body": "승민종합건설(주)(대표 김만완)는 고객에게 회사 소개, 사업실적, 홍보 소식을 한곳에서 확인하실 수 있도록 공식 홈페이지를 오픈하였습니다.\n\n앞으로도 홍보센터를 통해 다양한 소식을 전해 드리겠습니다."
+    }
+  ]
+}

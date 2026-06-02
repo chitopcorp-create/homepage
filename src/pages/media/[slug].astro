@@ -1,0 +1,73 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import newsData from '@/data/news.json';
+
+export function getStaticPaths() {
+  return newsData.articles.map((article) => ({
+    params: { slug: article.slug },
+    props: { article },
+  }));
+}
+
+type ArticleImage = { src: string; alt: string };
+
+const { article } = Astro.props;
+const paragraphs = article.body ? article.body.split('\n\n').filter(Boolean) : [];
+
+const articleImages: ArticleImage[] =
+  'images' in article && Array.isArray((article as { images?: ArticleImage[] }).images)
+    ? (article as { images: ArticleImage[] }).images
+    : 'image' in article && (article as { image?: string }).image
+      ? [
+          {
+            src: (article as { image: string }).image,
+            alt:
+              'imageAlt' in article && (article as { imageAlt?: string }).imageAlt
+                ? (article as { imageAlt: string }).imageAlt
+                : article.title,
+          },
+        ]
+      : [];
+---
+
+<BaseLayout title={article.title} description={article.summary}>
+  <article class="py-24">
+    <div class="mx-auto max-w-3xl px-4 lg:px-8">
+      <a href="/media#news" class="text-sm font-medium text-gold transition hover:underline">
+        ← 보도자료 · 공지
+      </a>
+      <time datetime={article.date} class="mt-6 block text-sm text-gold">
+        {article.date}
+      </time>
+      <h1 class="mt-2 text-3xl font-bold text-navy md:text-4xl">{article.title}</h1>
+      {article.summary && <p class="mt-4 text-lg text-gray-600">{article.summary}</p>}
+
+      {
+        articleImages.length > 0 ? (
+          <div class="mt-10 space-y-8">
+            {articleImages.map((img, index) => (
+              <figure>
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  class="w-full rounded-lg border border-gray-200 bg-white shadow-sm"
+                  width="1200"
+                  height="1600"
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                />
+              </figure>
+            ))}
+          </div>
+        ) : (
+          paragraphs.length > 0 && (
+            <div class="mt-10 space-y-4 leading-relaxed text-gray-600">
+              {paragraphs.map((p) => (
+                <p>{p}</p>
+              ))}
+            </div>
+          )
+        )
+      }
+    </div>
+  </article>
+</BaseLayout>

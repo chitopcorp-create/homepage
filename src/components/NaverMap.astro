@@ -1,0 +1,98 @@
+---
+interface Props {
+  lat: number;
+  lng: number;
+  address: string;
+  title?: string;
+  zoom?: number;
+}
+
+const { lat, lng, address, title = '오시는 길', zoom = 16 } = Astro.props;
+const clientId = import.meta.env.PUBLIC_NAVER_MAP_CLIENT_ID ?? '';
+const mapId = 'company-location-map';
+
+const pad = 0.004;
+const osmBbox = `${lng - pad},${lat - pad},${lng + pad},${lat + pad}`;
+const osmEmbedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(osmBbox)}&layer=mapnik&marker=${lat}%2C${lng}`;
+---
+
+<div class="location-map">
+  {
+    clientId ? (
+      <div
+        id={mapId}
+        class="h-[min(420px,70vh)] w-full bg-gray-100"
+        role="img"
+        aria-label={`${title}: ${address}`}
+      />
+    ) : (
+      <iframe
+        src={osmEmbedUrl}
+        title={`${title} 지도`}
+        class="h-[min(420px,70vh)] w-full border-0"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      />
+    )
+  }
+</div>
+
+{
+  clientId && (
+    <script is:inline define:vars={{ mapId, lat, lng, address, zoom, clientId }}>
+      (function () {
+        const el = document.getElementById(mapId);
+        if (!el) return;
+
+        function escapeHtml(text) {
+          return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+        }
+
+        function init() {
+          const center = new naver.maps.LatLng(lat, lng);
+          const map = new naver.maps.Map(el, {
+            center,
+            zoom,
+            zoomControl: true,
+            zoomControlOptions: { position: naver.maps.Position.TOP_RIGHT },
+          });
+          const marker = new naver.maps.Marker({ position: center, map });
+          const infoWindow = new naver.maps.InfoWindow({
+            content: [
+              '<div style="padding:10px 14px;text-align:center;line-height:1.5;min-width:180px;">',
+              '<strong style="font-size:13px;color:#1e293b;">',
+              escapeHtml(address),
+              '</strong>',
+              '</div>',
+            ].join(''),
+            borderWidth: 1,
+            borderColor: '#e2e8f0',
+            disableAnchor: true,
+            backgroundColor: '#fff',
+            pixelOffset: new naver.maps.Point(0, -8),
+          });
+          infoWindow.open(map, marker);
+        }
+
+        if (window.naver?.maps) {
+          init();
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${encodeURIComponent(clientId)}`;
+        script.async = true;
+        script.onload = init;
+        script.onerror = function () {
+          el.innerHTML =
+            '<p class="flex h-full min-h-[200px] items-center justify-center px-4 text-center text-sm text-gray-600">네이버 지도를 불러오지 못했습니다. Client ID와 서비스 URL 등록을 확인해 주세요.</p>';
+        };
+        document.head.appendChild(script);
+      })();
+    </script>
+  )
+}

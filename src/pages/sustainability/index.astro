@@ -1,0 +1,149 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import SustainabilitySectionIntro from '@/components/SustainabilitySectionIntro.astro';
+import SustainabilityPillarCards from '@/components/SustainabilityPillarCards.astro';
+import CustomerSatisfactionCarousel from '@/components/CustomerSatisfactionCarousel.astro';
+import QualityContentBlocks from '@/components/QualityContentBlocks.astro';
+import SafetyContentBlocks from '@/components/SafetyContentBlocks.astro';
+import EnvironmentContentBlocks from '@/components/EnvironmentContentBlocks.astro';
+import navigation from '@/data/navigation.json';
+
+const customerPillars = [
+  {
+    icon: '🏗️',
+    title: '명품시공',
+    body: '승민종합건설(주)는 1994년부터 축적해 온 시공 기술과 풍부한 현장 경험을 바탕으로, 품질과 완성도를 최우선으로 하는 명품시공을 실현해 왔습니다. 오랜 시간 다양한 건축 현장에서 쌓아온 노하우와 책임 있는 시공관리 체계를 통해 고객의 요구에 부합하는 최적의 결과물을 제공하고 있으며, 고객 자산의 가치를 높이는 신뢰받는 건설 파트너가 되고자 끊임없이 노력하고 있습니다.',
+  },
+  {
+    icon: '🧮',
+    title: '선제제안',
+    body: '승민종합건설(주)는 다양한 개발 프로젝트를 통해 축적한 경험을 바탕으로 고객의 니즈와 사업 목적을 정확히 이해하고 있습니다. 입지 분석, 사업성 검토, 설계 방향, 인허가, 시공성 등 개발 과정에서 고객이 미처 확인하기 어려운 부분까지 전문적인 시각으로 면밀히 검토하고, 사업의 완성도와 자산가치를 높일 수 있는 최적의 방향을 선제적으로 제시하겠습니다.',
+  },
+  {
+    icon: '🔨',
+    title: '지속관리',
+    body: '승민종합건설(주)는 임대업 및 건물종합관리업 경험을 바탕으로 준공 이후의 건물 운영까지 고려합니다. 임대차 관리, 공실관리, 시설 유지보수, 하자 대응 등 실제 운영 과정에서 필요한 사항을 체계적으로 조언하고, 고객의 불편사항에는 신속하게 대응하여 자산의 안정적인 운영과 가치 유지를 돕습니다.',
+  },
+];
+
+const sections = [
+  {
+    id: 'customer',
+    title: '고객맞춤경영',
+    heroImage: '/images/sustainability/customer-hero.png',
+    heroCaption: '고객의 필요를 먼저 읽고, 가장 정확한 해답을 제시합니다.',
+    pillars: customerPillars,
+  },
+  {
+    id: 'quality',
+    title: '품질경영',
+    heroImage: '/images/sustainability/quality-hero.png',
+    heroCaption: '품질은 모든 가치의 출발점이자, 신뢰를 완성하는 가장 근본적인 기준입니다.',
+    showQualityContent: true,
+  },
+  {
+    id: 'safety',
+    title: '안전경영',
+    heroImage: '/images/sustainability/safety-hero.png',
+    heroCaption: [
+      '승민종합건설(주)는 1994년부터 이어온 인간존중의 철학을 바탕으로,',
+      '근로자 한 사람 한 사람의 존엄과 생명을 최우선 가치로 삼아 안전한 현장 조성에 만전을 기하겠습니다.',
+    ],
+    heroCaptionLong: true,
+    showSafetyContent: true,
+  },
+  {
+    id: 'environment',
+    title: '녹색경영',
+    heroImage: '/images/sustainability/environment-hero.png',
+    heroCaption: [
+      '승민종합건설(주)는 1994년부터 이어온 환경보전의 철학을 바탕으로,',
+      '자연친화적이고 자원순환 중심의 현장 운영을 실천하며 자연과 공존하는 지속가능한 건설문화를 만들어가겠습니다.',
+    ],
+    heroCaptionLong: true,
+    showEnvironmentContent: true,
+  },
+];
+
+const sustainabilityMenu = navigation.items.find((item) => item.label === '지속가능경영');
+---
+
+<BaseLayout
+  title="지속가능경영"
+  description="승민종합건설(주) 지속가능경영 - 고객맞춤·품질·안전·녹색 경영"
+  tabHero
+>
+  <PageHero
+    title="지속가능경영"
+    submenus={sustainabilityMenu?.children ?? []}
+    stickySubmenu
+    submenuMode="hash"
+    defaultSectionId="customer"
+    titleBackgroundImage="/images/sustainability/hero-bg.png"
+    immersiveHero
+  />
+
+  {
+    sections.map((section, i) => (
+      <section
+        id={section.id}
+        class:list={['scroll-mt-28', i % 2 === 1 ? 'bg-gray-50' : 'bg-white']}
+      >
+        <div class="py-12 md:py-16 lg:py-20">
+          <SustainabilitySectionIntro
+            title={section.title}
+            lead={section.lead}
+            heroImage={section.heroImage}
+            heroCaption={section.heroCaption}
+            heroCaptionLong={section.heroCaptionLong}
+          />
+
+          {
+            section.pillars ? (
+              <>
+                <div class="mt-12 lg:mt-16">
+                  <SustainabilityPillarCards pillars={section.pillars} />
+                </div>
+                <hr class="mx-auto mt-14 max-w-7xl border-0 border-t border-gray-200/90 md:mt-20 lg:px-8" aria-hidden="true" />
+                <div class="pt-14 md:pt-20 lg:pt-24">
+                  <CustomerSatisfactionCarousel />
+                </div>
+              </>
+            ) : section.showQualityContent ? (
+              <div class="mt-10 md:mt-14">
+                <QualityContentBlocks />
+              </div>
+            ) : section.showSafetyContent ? (
+              <div class="mt-10 md:mt-14">
+                <SafetyContentBlocks />
+              </div>
+            ) : section.showEnvironmentContent ? (
+              <div class="mt-10 md:mt-14">
+                <EnvironmentContentBlocks />
+              </div>
+            ) : (
+              <div class="mx-auto mt-12 max-w-7xl px-4 lg:mt-16 lg:px-8">
+                <ul class="grid gap-3 sm:grid-cols-3">
+                  {section.items?.map((item) => (
+                    <li
+                      class:list={[
+                        'flex gap-2 rounded-lg border border-gray-100 p-4 text-sm text-gray-700 shadow-sm',
+                        i % 2 === 1 ? 'bg-white' : 'bg-gray-50',
+                      ]}
+                    >
+                      <span class="text-gold" aria-hidden="true">
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          }
+        </div>
+      </section>
+    ))
+  }
+</BaseLayout>

@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "href": "/about",
+      "label": "회사소개",
+      "children": [
+        { "label": "대표 인사말", "href": "/about#greeting" },
+        { "label": "회사개요", "href": "/about#overview" },
+        { "label": "회사연혁", "href": "/about#history" },
+        { "label": "조직도", "href": "/about#organization" },
+        { "label": "오시는길", "href": "/about#location" }
+      ]
+    },
+    {
+      "href": "/projects",
+      "label": "사업실적",
+      "children": [
+        { "label": "전체 프로젝트", "href": "/projects" },
+        { "label": "주거시설", "href": "/projects?category=주거시설" },
+        { "label": "업무시설", "href": "/projects?category=업무시설" },
+        { "label": "의료시설", "href": "/projects?category=의료시설" },
+        { "label": "공장/물류창고", "href": "/projects?category=공장/물류창고" },
+        { "label": "학교", "href": "/projects?category=학교" },
+        { "label": "호텔", "href": "/projects?category=호텔" },
+        { "label": "토목/관급공사", "href": "/projects?category=토목/관급공사" }
+      ]
+    },
+    {
+      "href": "/sustainability",
+      "label": "지속가능경영",
+      "children": [
+        { "label": "고객맞춤경영", "href": "/sustainability#customer" },
+        { "label": "품질경영", "href": "/sustainability#quality" },
+        { "label": "안전경영", "href": "/sustainability#safety" },
+        { "label": "녹색경영", "href": "/sustainability#environment" }
+      ]
+    },
+    {
+      "href": "/media",
+      "label": "홍보센터",
+      "children": [
+        { "label": "보도자료", "href": "/media#news" },
+        { "label": "사업제안서", "href": "/media#proposal" },
+        { "label": "채용정보", "href": "/media#recruitment" }
+      ]
+    }
+  ]
+}

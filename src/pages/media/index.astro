@@ -1,0 +1,107 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHero from '@/components/PageHero.astro';
+import BusinessProposalSection from '@/components/BusinessProposalSection.astro';
+import newsData from '@/data/news.json';
+import navigation from '@/data/navigation.json';
+
+const sortedArticles = [...newsData.articles].sort(
+  (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+);
+const mediaMenu = navigation.items.find((item) => item.label === '홍보센터');
+---
+
+<BaseLayout title="홍보센터" description="승민종합건설(주) 보도자료, 갤러리, 자료실, SNS" tabHero>
+  <PageHero
+    title="홍보센터"
+    submenus={mediaMenu?.children ?? []}
+    stickySubmenu
+    submenuMode="hash"
+    defaultSectionId="news"
+    titleBackgroundImage="/images/media/hero-bg.png"
+    titleBackgroundPosition="center center"
+    immersiveHero
+  />
+
+  <section id="news" class="scroll-mt-28 py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">보도자료 · 공지</h2>
+      {
+        sortedArticles.length > 0 ? (
+          <ul class="mt-8 divide-y divide-gray-100 border-y border-gray-100">
+            {sortedArticles.map((article) => (
+              <li>
+                <a
+                  href={`/media/${article.slug}`}
+                  class="flex flex-col gap-2 py-6 transition hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between sm:px-4"
+                >
+                  <div>
+                    <time datetime={article.date} class="text-sm text-gold">
+                      {article.date}
+                    </time>
+                    <h3 class="mt-1 text-lg font-semibold text-navy">{article.title}</h3>
+                    <p class="mt-1 text-sm text-gray-500 line-clamp-1">{article.summary}</p>
+                  </div>
+                  <span class="shrink-0 text-sm font-medium text-gold">자세히 →</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="mt-8 text-center text-gray-500">등록된 게시물이 없습니다.</p>
+        )
+      }
+    </div>
+  </section>
+
+  <section id="proposal" class="scroll-mt-28 bg-gray-50 py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">사업제안서</h2>
+      <div class="mt-8 lg:mt-10">
+        <BusinessProposalSection />
+      </div>
+    </div>
+  </section>
+
+  <section id="ci" class="scroll-mt-28 py-16">
+    <div class="mx-auto max-w-7xl px-4 lg:px-8">
+      <h2 class="text-2xl font-bold text-navy">CI</h2>
+      <p class="mt-4 max-w-2xl text-gray-600">
+        승민종합건설(주)의 공식 로고 및 상호 사용 가이드입니다.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-8 rounded-lg border border-gray-200 bg-white p-8">
+        <img
+          src="/images/logo.png"
+          alt="승민종합건설 로고"
+          class="h-24 w-auto object-contain"
+          width="200"
+          height="96"
+        />
+        <div>
+          <p class="font-bmhanna text-2xl font-bold text-navy">승민종합건설(주)</p>
+          <p class="mt-2 text-sm font-medium uppercase tracking-wide text-navy/70">
+            SEUNGMIN CONSTRUCTION INC.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="recruitment" class="scroll-mt-28 bg-navy py-20 text-white md:py-28 lg:py-32">
+    <div class="mx-auto max-w-7xl px-4 text-center lg:px-8">
+      <h2 class="text-3xl font-extrabold tracking-tight md:text-4xl lg:text-5xl">채용정보</h2>
+      <p class="mx-auto mt-10 max-w-3xl text-lg font-bold leading-relaxed text-white md:mt-12 md:text-xl lg:mt-14 lg:text-2xl lg:leading-relaxed">
+        승민종합건설(주)는 “환경보전과 인간존중”의 철학 아래, 사람과 자연이 조화롭게 공존하는 건설문화를 함께
+        만들어갈 인재를 기다립니다.
+      </p>
+      <p class="mt-12 md:mt-14 lg:mt-16">
+        <a
+          href="mailto:sm22230@hanmail.net?subject=%EC%B1%84%EC%9A%A9%20%EB%AC%B8%EC%9D%98"
+          class="inline-flex rounded bg-gold px-8 py-4 text-base font-bold text-navy transition hover:bg-gold-light md:px-10 md:py-4 md:text-lg"
+        >
+          채용 문의하기
+        </a>
+      </p>
+    </div>
+  </section>
+</BaseLayout>

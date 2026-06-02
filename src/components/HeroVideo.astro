@@ -1,0 +1,21 @@
+---
+---
+
+<section id="hero-section" class="relative h-svh w-full bg-black" aria-label="메인 영상">
+  <video
+    id="hero-video"
+    class="absolute inset-0 h-full w-full object-cover"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+  >
+    <source src="/videos/hero.mp4" type="video/mp4" />
+  </video>
+</section>
+
+<script>
+  const video = document.getElementById('hero-video') as HTMLVideoElement | null;
+  video?.play().catch(() => {});
+</script>

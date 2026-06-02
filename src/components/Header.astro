@@ -1,0 +1,289 @@
+---
+import BrandMark from '@/components/BrandMark.astro';
+import nav from '@/data/navigation.json';
+
+const currentPath = Astro.url.pathname;
+const normalizedPath = currentPath.replace(/\/$/, '') || '/';
+const immersiveHeroPaths = ['/about', '/projects', '/sustainability', '/media'];
+const isHome = currentPath === '/' || currentPath === '/index.html';
+const isImmersiveHeroPage = immersiveHeroPaths.includes(normalizedPath);
+const useTransparentHeader = isHome || isImmersiveHeroPage;
+const isActive = (href: string) => {
+  const base = href.split('#')[0].split('?')[0];
+  return base === '/' ? currentPath === '/' : currentPath.startsWith(base);
+};
+
+const navGap =
+  'gap-10 pr-2 md:gap-12 lg:gap-16 lg:pr-6 xl:gap-20 xl:pr-10';
+---
+
+<header
+  id="site-header"
+  class:list={[
+    'group/header fixed top-0 left-0 right-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-300 ease-out',
+    useTransparentHeader ? 'header-over-video' : 'header-visible bg-white border-gray-200 shadow-none',
+  ]}
+  data-home={isHome ? 'true' : 'false'}
+  data-immersive-hero={isImmersiveHeroPage ? 'true' : 'false'}
+>
+  <div class="header-bar relative mx-auto max-w-7xl px-3 lg:px-8 xl:pl-10">
+    <div class="flex items-stretch gap-4 pt-3 lg:pt-4">
+      <a href="/" class="group flex shrink-0 items-center self-center transition hover:opacity-90" aria-label="홈">
+        <BrandMark variant="header" />
+      </a>
+
+      <nav
+        id="desktop-nav"
+        class:list={['hidden flex-1 items-stretch justify-end self-stretch md:flex', navGap]}
+        aria-label="주메뉴"
+      >
+        {
+          nav.items.map((item) => (
+            <div class="nav-item relative flex items-center self-stretch">
+              <a
+                href={item.href}
+                class:list={[
+                  'nav-link block whitespace-nowrap py-2 text-lg font-semibold tracking-wide transition-[color] duration-200 md:text-xl lg:text-[1.35rem] xl:text-2xl',
+                  isActive(item.href) ? 'is-active' : '',
+                ]}
+              >
+                {item.label}
+              </a>
+              <span class="nav-accent" aria-hidden="true"></span>
+              {item.children?.length ? (
+                <ul
+                  class="nav-submenu pointer-events-none invisible absolute left-0 top-[calc(100%+3px)] z-20 flex min-w-[9.5rem] flex-col items-start gap-1 pt-4 opacity-0 transition-[opacity,visibility] duration-200"
+                  aria-label={`${item.label} 하위 메뉴`}
+                >
+                  {item.children.map((child) => (
+                    <li class="w-full">
+                      <a
+                        href={child.href}
+                        class="nav-sub-link block whitespace-nowrap py-1.5 text-[15px] font-semibold text-gray-600 transition-colors duration-200 lg:text-base"
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ))
+        }
+      </nav>
+
+      <div class="flex shrink-0 items-center self-center md:min-w-[2.75rem]">
+        <button
+          type="button"
+          id="mobile-menu-btn"
+          class="header-menu-btn flex h-11 w-11 items-center justify-center rounded md:hidden"
+          aria-label="메뉴 열기"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="header-mega"
+    class="header-mega invisible absolute left-0 right-0 top-full bg-white opacity-0 transition-[opacity,visibility] duration-200"
+    aria-hidden="true"
+  >
+    <div class="mx-auto max-w-7xl px-3 pb-10 pt-2 lg:px-8" aria-hidden="true"></div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    class="mobile-menu-panel hidden border-t border-gray-200 bg-white md:hidden"
+    aria-hidden="true"
+  >
+    <nav class="flex flex-col px-4 py-2" aria-label="모바일 메뉴">
+      {
+        nav.items.map((item) => (
+          <div class="border-b border-gray-100 py-1">
+            <a
+              href={item.href}
+              class:list={[
+                'block py-3 text-base font-semibold text-navy transition hover:text-gold',
+                isActive(item.href) ? 'text-gold' : '',
+              ]}
+            >
+              {item.label}
+            </a>
+            {item.children?.length ? (
+              <ul class="mb-3 ml-3 space-y-1 border-l-2 border-gold/30 pl-4">
+                {item.children.map((child) => (
+                  <li>
+                    <a
+                      href={child.href}
+                      class="block py-2 text-sm text-gray-600 transition hover:text-gold"
+                    >
+                      {child.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mega = document.getElementById('header-mega');
+  const desktopNav = document.getElementById('desktop-nav');
+  const isHome = header?.dataset.home === 'true';
+  const isImmersiveHero = header?.dataset.immersiveHero === 'true';
+
+  const solidHeaderClasses = ['header-visible', 'bg-white', 'border-gray-200', 'shadow-none'];
+  const videoHeaderClasses = ['header-over-video'];
+
+  let megaOpen = false;
+
+  const syncMegaPanelHeight = () => {
+    if (!mega || !desktopNav) return;
+    const inner = mega.firstElementChild as HTMLElement | null;
+    if (!inner) return;
+    const submenus = desktopNav.querySelectorAll<HTMLElement>('.nav-submenu');
+    let maxBottom = 0;
+    submenus.forEach((panel) => {
+      const bottom = panel.offsetTop + panel.offsetHeight;
+      if (bottom > maxBottom) maxBottom = bottom;
+    });
+    inner.style.minHeight = megaOpen && maxBottom > 0 ? `${maxBottom + 16}px` : '';
+  };
+
+  const setSolidBar = () => {
+    header?.classList.remove(...videoHeaderClasses);
+    header?.classList.add(...solidHeaderClasses);
+  };
+
+  const setOverVideo = () => {
+    if (megaOpen) return;
+    header?.classList.remove(...solidHeaderClasses);
+    header?.classList.add(...videoHeaderClasses);
+    if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      menuBtn?.setAttribute('aria-expanded', 'false');
+    }
+  };
+
+  const showMega = () => {
+    if (!mega || !desktopNav?.querySelector('.nav-submenu')) return;
+    megaOpen = true;
+    header?.classList.add('header-menu-open');
+    setSolidBar();
+
+    mega.classList.remove('invisible', 'opacity-0');
+    mega.classList.add('visible', 'opacity-100');
+    mega.setAttribute('aria-hidden', 'false');
+
+    requestAnimationFrame(syncMegaPanelHeight);
+  };
+
+  const hideMega = () => {
+    if (!mega) return;
+    megaOpen = false;
+    header?.classList.remove('header-menu-open');
+
+    mega.classList.add('invisible', 'opacity-0');
+    mega.classList.remove('visible', 'opacity-100');
+    mega.setAttribute('aria-hidden', 'true');
+
+    const inner = mega.firstElementChild as HTMLElement | null;
+    if (inner) inner.style.minHeight = '';
+  };
+
+  const syncHeaderHeight = () => {
+    const headerBar = document.querySelector<HTMLElement>('.header-bar');
+    const height = headerBar?.offsetHeight ?? header?.offsetHeight ?? 88;
+    document.documentElement.style.setProperty('--site-header-height', `${height}px`);
+  };
+
+  const updateHeaderOnScroll = () => {
+    if (isImmersiveHero) {
+      hideMega();
+      const stickyBar = document.querySelector<HTMLElement>('[data-sticky-submenu-bar]');
+      const headerH = header?.offsetHeight ?? 88;
+      const tabStuck =
+        !!stickyBar &&
+        stickyBar.getBoundingClientRect().top <= headerH + 1 &&
+        window.scrollY > 32;
+
+      if (tabStuck) {
+        setSolidBar();
+      } else if (!megaOpen) {
+        setOverVideo();
+      }
+      return;
+    }
+
+    if (!isHome) {
+      hideMega();
+      setSolidBar();
+      return;
+    }
+
+    const hero = document.getElementById('hero-section');
+    const heroBottom = hero ? hero.offsetTop + hero.offsetHeight : window.innerHeight;
+    if (window.scrollY >= heroBottom - 1) {
+      hideMega();
+      setSolidBar();
+    } else if (!megaOpen) {
+      setOverVideo();
+    }
+  };
+
+  desktopNav?.addEventListener('mouseenter', showMega);
+  desktopNav?.addEventListener('focusin', showMega);
+  mega?.addEventListener('mouseenter', showMega);
+
+  header?.addEventListener('mouseleave', () => {
+    hideMega();
+    updateHeaderOnScroll();
+  });
+
+  header?.addEventListener('focusout', (e) => {
+    if (!header.contains(e.relatedTarget as Node)) {
+      hideMega();
+      updateHeaderOnScroll();
+    }
+  });
+
+  syncHeaderHeight();
+
+  if (!isHome && !isImmersiveHero) {
+    setSolidBar();
+  }
+
+  menuBtn?.addEventListener('click', () => {
+    const isOpen = mobileMenu?.classList.toggle('hidden') === false;
+    menuBtn.setAttribute('aria-expanded', String(isOpen));
+    mobileMenu?.setAttribute('aria-hidden', String(!isOpen));
+    if (isOpen) {
+      hideMega();
+      setSolidBar();
+    } else {
+      updateHeaderOnScroll();
+    }
+  });
+
+  window.addEventListener('scroll', updateHeaderOnScroll, { passive: true });
+  window.addEventListener('resize', () => {
+    syncHeaderHeight();
+    updateHeaderOnScroll();
+    if (megaOpen) syncMegaPanelHeight();
+  }, { passive: true });
+  updateHeaderOnScroll();
+</script>

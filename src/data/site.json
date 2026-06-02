@@ -1,0 +1,12 @@
+{
+  "siteUrl": "https://example.com",
+  "siteName": "승민종합건설(주)",
+  "defaultDescription": "승민종합건설(주) 공식 홈페이지 - 건축·토목·종합건설",
+  "notice": {
+    "enabled": false,
+    "title": "",
+    "content": "",
+    "link": "/media",
+    "linkText": "자세히 보기"
+  }
+}

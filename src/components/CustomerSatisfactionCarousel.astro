@@ -1,0 +1,225 @@
+---
+const caseImages = Array.from({ length: 12 }, (_, i) => ({
+  src: `/images/sustainability/customer-cases/case-${String(i + 1).padStart(2, '0')}.png`,
+  alt: `고객만족 사례 감사패 ${i + 1}`,
+}));
+---
+
+<section class="customer-cases mx-auto max-w-7xl px-4 lg:px-8" aria-labelledby="customer-cases-title">
+  <h3
+    id="customer-cases-title"
+    class="text-center text-2xl font-bold text-[#38bdf8] md:text-3xl lg:text-[2.5rem]"
+  >
+    고객만족 사례
+  </h3>
+
+  <div
+    class="customer-carousel relative mt-10 md:mt-12"
+    data-customer-carousel
+    tabindex="0"
+    role="region"
+    aria-label="고객만족 사례 감사패"
+  >
+    <div class="customer-carousel__stage mx-auto max-w-5xl">
+      <div class="customer-carousel__track" data-carousel-track>
+        {
+          caseImages.map((item, index) => (
+            <button
+              type="button"
+              class="customer-carousel__item"
+              data-carousel-item
+              data-index={index}
+              aria-label={`${item.alt} 보기`}
+            >
+              <img src={item.src} alt={item.alt} class="customer-carousel__img" loading="lazy" decoding="async" />
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .customer-carousel__stage {
+    perspective: 1200px;
+    height: clamp(16rem, 42vw, 22rem);
+  }
+
+  .customer-carousel__track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+  }
+
+  .customer-carousel__item {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(72%, 14rem);
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transform-origin: center center;
+    will-change: transform, opacity, filter;
+  }
+
+  .customer-carousel__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: clamp(14rem, 38vw, 20rem);
+    object-fit: contain;
+    border-radius: 0.25rem;
+    box-shadow: 0 8px 24px rgba(15, 31, 61, 0.12);
+    background: #fff;
+    pointer-events: none;
+    transition: box-shadow 0.35s ease;
+  }
+
+  .customer-carousel__item.is-front .customer-carousel__img {
+    box-shadow: 0 12px 32px rgba(15, 31, 61, 0.2);
+  }
+
+  .customer-carousel__item.is-hovered .customer-carousel__img {
+    box-shadow: 0 16px 40px rgba(15, 31, 61, 0.28);
+  }
+</style>
+
+<script>
+  const carousel = document.querySelector('[data-customer-carousel]');
+  if (carousel) {
+    const items = Array.from(carousel.querySelectorAll<HTMLButtonElement>('[data-carousel-item]'));
+    const total = items.length;
+    const SPEED = 0.45;
+
+    let progress = 0;
+    let lastTime = 0;
+    let paused = false;
+    let hoveredIndex: number | null = null;
+    let rafId = 0;
+
+    const getWrappedOffset = (index: number, center: number) => {
+      let diff = index - center;
+      while (diff > total / 2) diff -= total;
+      while (diff < -total / 2) diff += total;
+      return diff;
+    };
+
+    const layoutItem = (item: HTMLButtonElement, offset: number, isHovered: boolean) => {
+      const spread = Math.min(280, carousel.clientWidth * 0.22);
+      const abs = Math.abs(offset);
+      const frontness = Math.max(0, 1 - abs);
+
+      let scale = 0.5 + frontness * 0.55;
+      let opacity = Math.max(0, 1 - abs * 0.32);
+      let blur = Math.min(2.5, abs * 0.85);
+      const rotateY = offset * -16;
+      const translateX = offset * spread;
+      const translateZ = -abs * 75 + frontness * 25;
+
+      if (isHovered) {
+        scale = 1.2;
+        opacity = 1;
+        blur = 0;
+      }
+
+      if (abs > 3.8 && !isHovered) {
+        opacity = 0;
+        item.style.pointerEvents = 'none';
+      } else {
+        item.style.pointerEvents = 'auto';
+      }
+
+      item.classList.toggle('is-front', abs < 0.55 && !isHovered);
+      item.classList.toggle('is-hovered', isHovered);
+
+      item.style.zIndex = String(Math.round(100 - abs * 10 + (isHovered ? 50 : 0)));
+      item.style.transform = `translate(-50%, -50%) translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`;
+      item.style.opacity = String(opacity);
+      item.style.filter = blur > 0.05 ? `blur(${blur}px)` : 'none';
+    };
+
+    const tick = (time: number) => {
+      if (!lastTime) lastTime = time;
+      const dt = Math.min((time - lastTime) / 1000, 0.05);
+      lastTime = time;
+
+      if (!paused && hoveredIndex === null) {
+        progress = (progress + SPEED * dt) % total;
+      }
+
+      const center = hoveredIndex ?? progress;
+
+      items.forEach((item) => {
+        const index = Number(item.dataset.index);
+        const offset = getWrappedOffset(index, center);
+        layoutItem(item, offset, hoveredIndex === index);
+      });
+
+      rafId = requestAnimationFrame(tick);
+    };
+
+    carousel.addEventListener('mouseenter', () => {
+      paused = true;
+    });
+
+    carousel.addEventListener('mouseleave', () => {
+      paused = false;
+      hoveredIndex = null;
+      lastTime = 0;
+    });
+
+    items.forEach((item) => {
+      const index = Number(item.dataset.index);
+
+      item.addEventListener('mouseenter', () => {
+        hoveredIndex = index;
+        progress = index;
+      });
+
+      item.addEventListener('mouseleave', () => {
+        if (!carousel.matches(':hover')) {
+          hoveredIndex = null;
+          lastTime = 0;
+        }
+      });
+
+      item.addEventListener('focus', () => {
+        hoveredIndex = index;
+        progress = index;
+        paused = true;
+      });
+
+      item.addEventListener('blur', () => {
+        hoveredIndex = null;
+        paused = false;
+        lastTime = 0;
+      });
+    });
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reducedMotion) {
+      items.forEach((item, i) => layoutItem(item, getWrappedOffset(i, 0), false));
+    } else {
+      rafId = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', () => {
+      lastTime = 0;
+    }, { passive: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId);
+      } else if (!reducedMotion) {
+        lastTime = 0;
+        rafId = requestAnimationFrame(tick);
+      }
+    });
+  }
+</script>

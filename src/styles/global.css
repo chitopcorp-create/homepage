@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-gray-800 antialiased;
+  }
+}
+
+/* 푸터 배경 (직접 지정) */
+#site-footer.site-footer {
+  background-color: #d4d9e0;
+  border-top: 1px solid #b8bec8;
+}
+
+#site-footer .site-footer-divider {
+  border-color: #b8bec8;
+}
+
+/* 메인 영상 위: 투명 헤더(영상이 비침), 메뉴·로고는 밝은 색 */
+#site-header.header-over-video {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+#site-header.header-over-video .brand-name-main,
+#site-header.header-over-video .brand-name-suffix,
+#site-header.header-over-video .brand-en {
+  color: #fff;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+}
+
+#site-header.header-over-video .nav-link {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+#site-header.header-over-video .nav-link:hover,
+#site-header.header-over-video .nav-link.is-active {
+  color: #fff;
+}
+
+#site-header.header-over-video .header-menu-btn {
+  color: #fff;
+}
+
+/* 영상 밖·다른 페이지: 흰색 헤더 */
+#site-header.header-visible {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+#site-header.header-visible .brand-name-main,
+#site-header.header-visible .brand-name-suffix,
+#site-header.header-visible .brand-en {
+  color: #0f1f3d;
+  text-shadow: none;
+}
+
+#site-header.header-visible .brand-en {
+  color: rgba(15, 31, 61, 0.65);
+}
+
+#site-header.header-visible .nav-link {
+  color: rgba(15, 31, 61, 0.9);
+  text-shadow: none;
+}
+
+#site-header.header-visible .nav-link.is-active {
+  color: #0f1f3d;
+}
+
+#site-header.header-visible .header-menu-btn {
+  color: #0f1f3d;
+}
+
+/* 메가메뉴 열림: 영상 위에서도 흰색 헤더 */
+#site-header.header-menu-open {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+#site-header.header-menu-open .brand-name-main,
+#site-header.header-menu-open .brand-name-suffix,
+#site-header.header-menu-open .brand-en {
+  color: #0f1f3d;
+  text-shadow: none;
+}
+
+#site-header.header-menu-open .brand-en {
+  color: rgba(15, 31, 61, 0.65);
+}
+
+#site-header.header-menu-open .nav-link {
+  color: rgba(15, 31, 61, 0.9);
+  text-shadow: none;
+}
+
+#site-header.header-menu-open .nav-link.is-active {
+  color: #0f1f3d;
+}
+
+#site-header.header-menu-open .header-menu-btn {
+  color: #0f1f3d;
+}
+
+/* 메가메뉴 열림: 헤더·소메뉴 사이 옅은 회색 구분선 */
+#site-header.header-menu-open .header-bar {
+  position: relative;
+  z-index: 20;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.header-mega {
+  z-index: 10;
+  box-shadow: 0 8px 24px rgba(15, 31, 61, 0.08);
+  pointer-events: none;
+}
+
+#site-header.header-menu-open .header-mega {
+  pointer-events: auto;
+}
+
+/* 호버한 주메뉴: 구분선 위치에 하늘색 강조선 + 글자색 */
+.nav-accent {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  height: 3px;
+  background-color: #38bdf8;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+#site-header.header-menu-open .nav-item:hover .nav-accent,
+#site-header.header-menu-open .nav-item:focus-within .nav-accent {
+  transform: scaleX(1);
+}
+
+#site-header.header-menu-open .nav-item:hover .nav-link,
+#site-header.header-menu-open .nav-item:focus-within > .nav-link {
+  color: #38bdf8;
+  text-shadow: none;
+}
+
+#site-header.header-over-video.header-menu-open .nav-item:hover .nav-link,
+#site-header.header-over-video.header-menu-open .nav-item:focus-within > .nav-link {
+  color: #38bdf8;
+  text-shadow: none;
+}
+
+#site-header.header-menu-open .nav-submenu {
+  z-index: 30;
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#site-header.header-menu-open .nav-sub-link:hover,
+#site-header.header-menu-open .nav-sub-link:focus-visible {
+  color: #38bdf8;
+}
+
+:root {
+  --site-header-height: 5.5rem;
+}
+
+/* 회사소개 등: 스크롤 시 헤더 바로 아래 가로 소메뉴만 고정 */
+.page-submenu-sticky {
+  top: var(--site-header-height, 5.5rem);
+}
+
+@layer utilities {
+  .fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
