@@ -3,6 +3,6 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://example.com',
+  site: 'https://www.smilesm.co.kr',
   integrations: [tailwind(), sitemap()],
 });
