@@ -124,7 +124,7 @@ const navGap =
 
   <div
     id="mobile-menu"
-    class="mobile-menu-drawer fixed bottom-0 left-0 z-[45] flex hidden w-[min(82vw,18.75rem)] max-w-[300px] -translate-x-full flex-col overflow-hidden bg-white shadow-[4px_0_24px_rgba(0,0,0,0.15)] transition-transform duration-300 ease-out md:hidden"
+    class="mobile-menu-drawer fixed bottom-0 right-0 z-[45] flex hidden w-[min(82vw,18.75rem)] max-w-[300px] translate-x-full flex-col overflow-hidden bg-white shadow-[-4px_0_24px_rgba(0,0,0,0.15)] transition-transform duration-300 ease-out md:hidden"
     style="top: var(--site-header-height, 5.5rem);"
     aria-hidden="true"
   >
@@ -151,7 +151,7 @@ const navGap =
                   <div class="flex min-h-[3.5rem] items-stretch">
                     <button
                       type="button"
-                      class="mobile-accordion-toggle flex min-w-0 flex-1 items-center px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-gold"
+                      class="mobile-accordion-toggle flex min-w-0 flex-1 items-center px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-[#38bdf8]"
                       aria-expanded="false"
                       aria-controls={submenuId}
                     >
@@ -159,7 +159,7 @@ const navGap =
                     </button>
                     <button
                       type="button"
-                      class="mobile-accordion-toggle flex w-14 shrink-0 items-center justify-center text-gray-400 transition hover:bg-gray-50 hover:text-gold"
+                      class="mobile-accordion-toggle flex w-14 shrink-0 items-center justify-center text-gray-400 transition hover:bg-gray-50 hover:text-[#38bdf8]"
                       aria-expanded="false"
                       aria-controls={submenuId}
                       aria-label={`${item.label} 하위 메뉴`}
@@ -186,7 +186,7 @@ const navGap =
                           <li class="border-b border-gray-200/80 last:border-b-0">
                             <a
                               href={child.href}
-                              class="mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:bg-white/60 hover:text-gold"
+                              class="mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:bg-white/60 hover:text-[#38bdf8]"
                             >
                               {child.label}
                             </a>
@@ -200,8 +200,8 @@ const navGap =
                 <a
                   href={item.href}
                   class:list={[
-                    'mobile-nav-link flex min-h-[3.5rem] items-center px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-gold',
-                    isActive(item.href) ? 'text-gold' : '',
+                    'mobile-nav-link flex min-h-[3.5rem] items-center px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-[#38bdf8]',
+                    isActive(item.href) ? 'text-[#38bdf8]' : '',
                   ]}
                 >
                   {item.label}
@@ -233,7 +233,7 @@ const navGap =
   }
 
   .mobile-nav-item:has(.mobile-accordion-panel.is-open) .mobile-accordion-toggle {
-    color: #c9a227;
+    color: #38bdf8;
   }
 
   .mobile-menu-backdrop.is-open {
@@ -247,7 +247,7 @@ const navGap =
   }
 
   .mobile-sub-link:active {
-    color: #c9a227;
+    color: #38bdf8;
   }
 </style>
 
