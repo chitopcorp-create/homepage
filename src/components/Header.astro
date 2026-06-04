@@ -160,24 +160,34 @@ const navGap =
               const hasChildren = (item.children?.length ?? 0) > 0;
 
               return hasChildren ? (
-                <button
-                  type="button"
-                  class="mobile-main-drill flex w-full min-h-[3.5rem] items-center justify-between gap-3 border-b border-gray-200 px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-gold"
-                  data-submenu-title={item.label}
-                  data-submenu-children={JSON.stringify(item.children)}
-                >
-                  <span>{item.label}</span>
-                  <svg
-                    class="h-5 w-5 shrink-0 text-gray-400"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    aria-hidden="true"
+                <div class="flex min-h-[3.5rem] items-stretch border-b border-gray-200">
+                  <button
+                    type="button"
+                    class="mobile-main-drill flex min-w-0 flex-1 items-center px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-gold"
+                    data-submenu-title={item.label}
+                    data-submenu-children={JSON.stringify(item.children)}
                   >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+                    {item.label}
+                  </button>
+                  <button
+                    type="button"
+                    class="mobile-main-drill flex w-14 shrink-0 items-center justify-center text-gray-400 transition hover:bg-gray-50 hover:text-gold"
+                    data-submenu-title={item.label}
+                    data-submenu-children={JSON.stringify(item.children)}
+                    aria-label={`${item.label} 하위 메뉴`}
+                  >
+                    <svg
+                      class="h-5 w-5 shrink-0"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      aria-hidden="true"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               ) : (
                 <a
                   href={item.href}
@@ -416,17 +426,22 @@ const navGap =
     setSolidBar();
   }
 
+  const openMobileDrill = (btn: HTMLButtonElement) => {
+    const title = btn.dataset.submenuTitle ?? '';
+    const raw = btn.dataset.submenuChildren;
+    if (!title || !raw) return;
+    try {
+      const children = JSON.parse(raw) as { label: string; href: string }[];
+      showMobileSubPanel(title, children);
+    } catch {
+      /* ignore malformed data */
+    }
+  };
+
   mobileMenu?.querySelectorAll<HTMLButtonElement>('.mobile-main-drill').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const title = btn.dataset.submenuTitle ?? '';
-      const raw = btn.dataset.submenuChildren;
-      if (!title || !raw) return;
-      try {
-        const children = JSON.parse(raw) as { label: string; href: string }[];
-        showMobileSubPanel(title, children);
-      } catch {
-        /* ignore malformed data */
-      }
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openMobileDrill(btn);
     });
   });
 
