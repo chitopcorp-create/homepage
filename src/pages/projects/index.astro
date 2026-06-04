@@ -3,7 +3,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHero from '@/components/PageHero.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import projectsData from '@/data/projects.json';
-import navigation from '@/data/navigation.json';
 
 const { categories } = projectsData;
 
@@ -14,15 +13,11 @@ const projects = [...projectsData.projects].sort((a, b) => {
   if (yearDiff !== 0) return yearDiff;
   return Number(hasProjectPhoto(b.image)) - Number(hasProjectPhoto(a.image));
 });
-const projectsMenu = navigation.items.find((item) => item.label === '사업실적');
 ---
 
 <BaseLayout title="사업실적" description="승민종합건설(주) 사업실적 - 건축, 토목, 종합건설" tabHero>
   <PageHero
     title="사업실적"
-    submenus={projectsMenu?.children ?? []}
-    stickySubmenu
-    submenuMode="query"
     titleBackgroundImage="/images/projects/hero-bg.png"
     immersiveHero
   />
@@ -82,17 +77,6 @@ const projectsMenu = navigation.items.find((item) => item.label === '사업실�
   let currentCategory = '전체';
   let isExpanded = false;
 
-  const syncSubmenuHighlight = (category: string) => {
-    document.querySelectorAll<HTMLAnchorElement>('[data-submenu-link]').forEach((link) => {
-      const parsed = new URL(link.href, window.location.origin);
-      const linkCategory = parsed.searchParams.get('category') ?? '전체';
-      const active = linkCategory === category;
-      link.classList.toggle('border-[#38bdf8]', active);
-      link.classList.toggle('text-[#38bdf8]', active);
-      link.classList.toggle('text-gray-500', !active);
-    });
-  };
-
   const applyFilter = (category: string, expand = false, syncUrl = true) => {
     if (category !== currentCategory) {
       currentCategory = category;
@@ -110,7 +94,6 @@ const projectsMenu = navigation.items.find((item) => item.label === '사업실�
       if (currentUrl !== nextUrl) {
         history.replaceState(null, '', nextUrl);
       }
-      syncSubmenuHighlight(category);
     }
 
     buttons.forEach((b) => {
@@ -165,9 +148,4 @@ const projectsMenu = navigation.items.find((item) => item.label === '사업실�
   } else {
     applyFilter('전체');
   }
-
-  window.addEventListener('page-submenu-query', (event) => {
-    const category = (event as CustomEvent<{ category: string }>).detail?.category ?? '전체';
-    applyFilter(category, false, false);
-  });
 </script>

@@ -23,5 +23,5 @@ npm run optimize:hero-video
 
 교체 방법:
 
-1. 원본 PNG를 `public/images/hero-mobile-source.png` 로 저장
+1. 원본 PNG를 `public/images/hero-mobile-source.png` 로 저장 (`.png.png`처럼 이중 확장자 주의)
 2. `npm run prepare:hero-mobile` 실행

@@ -1,8 +1,11 @@
 ---
+import company from '@/data/company.json';
+
 const videoSrc = '/videos/hero.mp4';
 const posterSrc = '/images/hero-poster.webp';
 const mobileImageSrc = '/images/hero-mobile.webp';
 const mobileImageFallback = '/images/hero-mobile.jpg';
+const modalTitle = `${company.nameMain} 홍보영상`;
 ---
 
 <section id="hero-section" class="hero-video-section relative w-full overflow-hidden bg-black" aria-label="메인 영상">
@@ -36,6 +39,19 @@ const mobileImageFallback = '/images/hero-mobile.jpg';
     <source src={videoSrc} type="video/mp4" />
   </video>
 
+  <button
+    type="button"
+    id="hero-play-open"
+    class="hero-play-btn absolute right-4 bottom-6 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-navy/55 text-white shadow-lg backdrop-blur-sm transition hover:bg-navy/75 md:right-6 md:bottom-8 md:h-14 md:w-14"
+    aria-label="홍보 영상 재생"
+    aria-controls="hero-video-modal"
+    aria-expanded="false"
+  >
+    <svg class="ml-0.5 h-5 w-5 md:h-6 md:w-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  </button>
+
   <a
     href="#highlights"
     class="hero-scroll-hint absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 text-white/90 transition hover:text-white md:bottom-8"
@@ -47,6 +63,54 @@ const mobileImageFallback = '/images/hero-mobile.jpg';
     </svg>
   </a>
 </section>
+
+<div
+  id="hero-video-modal"
+  class="hero-video-modal fixed inset-0 z-[70] hidden items-center justify-center bg-black/60 p-4 sm:p-6"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="hero-video-modal-title"
+  hidden
+>
+  <div class="hero-video-window w-full max-w-4xl overflow-hidden rounded-lg shadow-2xl" role="document">
+    <div class="hero-video-window__titlebar flex items-center gap-3 border-b border-gray-200 bg-[#ececec] px-3 py-2.5 sm:px-4">
+      <div class="flex shrink-0 items-center gap-1.5" aria-hidden="true">
+        <span class="hero-window-dot hero-window-dot--close" />
+        <span class="hero-window-dot hero-window-dot--min" />
+        <span class="hero-window-dot hero-window-dot--max" />
+      </div>
+      <p id="hero-video-modal-title" class="min-w-0 flex-1 truncate text-xs font-medium text-gray-700 sm:text-sm">
+        {modalTitle}
+      </p>
+      <button
+        type="button"
+        id="hero-play-close"
+        class="flex h-7 w-7 shrink-0 items-center justify-center rounded text-gray-500 transition hover:bg-gray-300/80 hover:text-gray-800"
+        aria-label="영상 닫기"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </div>
+    <div class="hero-video-window__body bg-[#1a1a1a] p-2 sm:p-3">
+      <div class="hero-video-modal__frame mx-auto w-full">
+        <video
+          id="hero-modal-video"
+          class="hero-video-modal__player"
+          width={1920}
+          height={1080}
+          poster={posterSrc}
+          controls
+          playsinline
+          preload="metadata"
+        >
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      </div>
+    </div>
+  </div>
+</div>
 
 <style>
   .hero-video-section {
@@ -90,6 +154,45 @@ const mobileImageFallback = '/images/hero-mobile.jpg';
   .hero-scroll-hint {
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
   }
+
+  .hero-play-btn {
+    text-shadow: none;
+  }
+
+  .hero-window-dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .hero-window-dot--close {
+    background: #ff5f57;
+  }
+
+  .hero-window-dot--min {
+    background: #febc2e;
+  }
+
+  .hero-window-dot--max {
+    background: #28c840;
+  }
+
+  .hero-video-modal__frame {
+    aspect-ratio: 16 / 9;
+    max-height: min(72vh, calc(100dvh - 8rem));
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-video-modal__player {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
+  }
 </style>
 
 <script>
@@ -124,4 +227,42 @@ const mobileImageFallback = '/images/hero-mobile.jpg';
     );
     if (!mq.matches) pauseVideo();
   }
+
+  const playOpen = document.getElementById('hero-play-open');
+  const playClose = document.getElementById('hero-play-close');
+  const modal = document.getElementById('hero-video-modal');
+  const modalVideo = document.getElementById('hero-modal-video') as HTMLVideoElement | null;
+
+  const openHeroModal = () => {
+    if (!modal || !modalVideo) return;
+    modal.removeAttribute('hidden');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    playOpen?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+    modalVideo.currentTime = 0;
+    modalVideo.play().catch(() => {});
+    playClose?.focus();
+  };
+
+  const closeHeroModal = () => {
+    if (!modal || !modalVideo) return;
+    modalVideo.pause();
+    modalVideo.currentTime = 0;
+    modal.setAttribute('hidden', '');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    playOpen?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+    playOpen?.focus();
+  };
+
+  playOpen?.addEventListener('click', openHeroModal);
+  playClose?.addEventListener('click', closeHeroModal);
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeHeroModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeHeroModal();
+  });
 </script>
