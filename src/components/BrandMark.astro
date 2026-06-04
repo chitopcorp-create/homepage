@@ -10,10 +10,10 @@ const isFooter = variant === 'footer';
 
 const nameMainClass = isFooter
   ? 'text-base sm:text-[1.65rem]'
-  : 'text-[0.95rem] sm:text-lg md:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
+  : 'text-[0.95rem] md:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
 const enClass = isFooter
   ? 'text-[8px] sm:text-[10px]'
-  : 'text-[6px] sm:text-[8px] md:text-[9px] lg:text-[10px]';
+  : 'text-[6px] max-md:text-[6px] md:text-[9px] lg:text-[10px]';
 
 const logoHeightPx = isFooter ? 88 : 82;
 const logoHeightMobilePx = isFooter ? 44 : 48;
@@ -37,7 +37,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
   <div
     class:list={[
       'brand-logo-shell flex shrink-0 items-center justify-center overflow-hidden',
-      !isFooter && 'h-12 w-12 md:h-auto md:w-auto',
+      !isFooter && 'max-md:h-12 max-md:w-12',
     ]}
   >
     <img
@@ -45,7 +45,9 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
       alt={`${company.name} 로고`}
       class:list={[
         'brand-logo object-contain object-center md:object-left',
-        !isFooter ? 'h-full w-full max-h-full max-w-full md:h-full md:w-auto md:max-w-none' : 'h-full w-auto max-w-none',
+        !isFooter
+          ? 'max-md:h-full max-md:w-full max-md:max-h-full max-md:max-w-full h-full w-auto max-w-none'
+          : 'h-full w-auto max-w-none',
       ]}
       width="160"
       height="56"
@@ -53,7 +55,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
   </div>
 
   <div
-    class="brand-text flex min-w-0 flex-1 flex-col items-start overflow-hidden sm:flex-none sm:max-w-full"
+    class="brand-text flex min-w-0 max-w-full flex-col items-start overflow-hidden max-md:flex-1 max-md:min-w-0"
     data-brand-text
   >
     <div class="brand-name-row whitespace-nowrap leading-none" data-brand-name-ref>
@@ -138,7 +140,11 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
       const logoHeightMobile = Number(mark.dataset.logoHeightMobile ?? 56);
       const logoHeight = isMobile ? logoHeightMobile : logoHeightDesktop;
       const maxTextHeight = logoHeight * Number(mark.dataset.textRatio ?? 0.88);
-      const basePx = Number(en.dataset.enBase ?? 7);
+      let basePx = Number(en.dataset.enBase ?? 7);
+      if (!isMobile && variant === 'header') {
+        const computedSize = parseFloat(getComputedStyle(en).fontSize);
+        if (computedSize > 0) basePx = computedSize;
+      }
 
       const targetWidth = ref.offsetWidth;
       textBlock.style.width = `${targetWidth}px`;
@@ -156,8 +162,13 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
 
       if (logoShell && logo) {
         logoShell.style.height = `${logoHeight}px`;
+        if (isMobile && variant === 'header') {
+          logoShell.style.width = `${logoHeight}px`;
+        } else {
+          logoShell.style.width = '';
+        }
         logo.style.height = '100%';
-        logo.style.width = 'auto';
+        logo.style.width = isMobile && variant === 'header' ? '100%' : 'auto';
       }
     });
   };
