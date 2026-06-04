@@ -75,7 +75,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? site.siteUrl);
     {
       tabHero && (
         <script is:inline>
-          {`(function(){if(!location.hash)return;history.scrollRestoration='manual';var p=function(){window.scrollTo(0,0)};p();document.addEventListener('DOMContentLoaded',p);window.addEventListener('load',function(){p();setTimeout(p,0);setTimeout(p,50)})})();`}
+          {`(function(){if(!location.hash)return;history.scrollRestoration='manual';var h=document.documentElement;h.style.overflow='hidden';window.scrollTo(0,0);var u=function(){h.style.overflow=''};window.addEventListener('page-submenu-ready',u,{once:true});setTimeout(u,2500)})();`}
         </script>
       )
     }

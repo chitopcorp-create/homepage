@@ -264,8 +264,10 @@ const submenuLinkClass = (compact: boolean) =>
 
     const toHash = (url: string) => new URL(url, window.location.origin).hash.replace('#', '');
     const sectionIds = links.map((link) => toHash(link.href)).filter(Boolean);
+    const getSectionEl = (id: string) =>
+      document.querySelector<HTMLElement>(`[data-section-id="${id}"]`);
     const sectionElements = sectionIds
-      .map((id) => document.getElementById(id))
+      .map((id) => getSectionEl(id))
       .filter((el): el is HTMLElement => el !== null);
     const relatedElements = Array.from(
       document.querySelectorAll<HTMLElement>('[data-submenu-parent]')
@@ -308,14 +310,14 @@ const submenuLinkClass = (compact: boolean) =>
       return headerH + stickyH + 8;
     };
 
-    const scrollToHeroTop = (smooth = true) => {
+    const scrollToHeroTop = () => {
       syncHeaderHeight();
-      pinHeroTop(smooth ? 'smooth' : 'auto');
+      pinHeroTop('auto');
     };
 
     const scrollToActiveSection = (sectionId: string) => {
       syncHeaderHeight();
-      const section = document.getElementById(sectionId);
+      const section = getSectionEl(sectionId);
       const offset = getStickyOffset();
 
       if (section) {
@@ -330,8 +332,8 @@ const submenuLinkClass = (compact: boolean) =>
     const hideOrphanMainSections = (activeId: string) => {
       const main = document.getElementById('main-content');
       if (!main) return;
-      main.querySelectorAll<HTMLElement>('section[id]').forEach((section) => {
-        section.style.display = section.id === activeId ? '' : 'none';
+      main.querySelectorAll<HTMLElement>('section[data-section-id]').forEach((section) => {
+        section.style.display = section.dataset.sectionId === activeId ? '' : 'none';
       });
     };
 
@@ -342,16 +344,17 @@ const submenuLinkClass = (compact: boolean) =>
 
       let shown = false;
       sectionElements.forEach((section) => {
-        const visible = section.id === id;
+        const sectionId = section.dataset.sectionId ?? '';
+        const visible = sectionId === id;
         section.style.display = visible ? '' : 'none';
         if (visible) shown = true;
       });
 
       if (!shown && sectionElements[0]) {
         sectionElements[0].style.display = '';
+        const fallbackId = sectionElements[0].dataset.sectionId ?? '';
         relatedElements.forEach((section) => {
-          section.style.display =
-            section.dataset.submenuParent === sectionElements[0].id ? '' : 'none';
+          section.style.display = section.dataset.submenuParent === fallbackId ? '' : 'none';
         });
         return;
       }
@@ -423,26 +426,11 @@ const submenuLinkClass = (compact: boolean) =>
 
       const initTabSubmenuFromUrl = () => {
         applySectionFromHash(false);
-        if (hasHashOnLoad || window.location.hash) {
-          scrollToHeroTop(false);
-        }
+        scrollToHeroTop();
+        window.dispatchEvent(new CustomEvent('page-submenu-ready'));
       };
 
       initTabSubmenuFromUrl();
-
-      if (hasHashOnLoad) {
-        requestAnimationFrame(() => scrollToHeroTop(false));
-        window.addEventListener(
-          'load',
-          () => {
-            applySectionFromHash(false);
-            scrollToHeroTop(false);
-            setTimeout(() => scrollToHeroTop(false), 0);
-            setTimeout(() => scrollToHeroTop(false), 80);
-          },
-          { once: true }
-        );
-      }
 
       window.addEventListener('page-submenu-navigate', () => applySectionFromHash(true));
       window.addEventListener('hashchange', () => applySectionFromHash(true));
