@@ -459,8 +459,31 @@ const navGap =
     });
   });
 
+  const handleNavSubmenuClick = (event: Event, anchor: HTMLAnchorElement) => {
+    const target = new URL(anchor.href, window.location.origin);
+    if (target.pathname !== window.location.pathname || !target.hash) return false;
+    if (!document.querySelector('[data-submenu-link][data-submenu-mode="tabs"]')) return false;
+
+    event.preventDefault();
+    const targetUrl = `${target.pathname}${target.search}${target.hash}`;
+    if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== targetUrl) {
+      history.pushState(null, '', targetUrl);
+    }
+    window.dispatchEvent(new CustomEvent('page-submenu-navigate'));
+    return true;
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('.nav-sub-link').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      handleNavSubmenuClick(event, link);
+    });
+  });
+
   mobileMenu?.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link, .mobile-sub-link').forEach((link) => {
-    link.addEventListener('click', () => setMobileMenuOpen(false));
+    link.addEventListener('click', (event) => {
+      handleNavSubmenuClick(event, link);
+      setMobileMenuOpen(false);
+    });
   });
 
   menuBtn?.addEventListener('click', () => {

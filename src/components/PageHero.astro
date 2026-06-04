@@ -412,12 +412,13 @@ const submenuLinkClass = (compact: boolean) =>
         }
 
         if (scrollToSection) {
-          requestAnimationFrame(() => scrollToActiveSection(selectedId));
+          requestAnimationFrame(() => scrollToHeroTop());
         }
       };
 
       applySectionFromHash(false);
 
+      window.addEventListener('page-submenu-navigate', () => applySectionFromHash(true));
       window.addEventListener('hashchange', () => applySectionFromHash(true));
       window.addEventListener('popstate', () => applySectionFromHash(true));
 
