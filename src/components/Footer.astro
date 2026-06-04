@@ -6,40 +6,44 @@ const year = new Date().getFullYear();
 ---
 
 <footer id="site-footer" class="site-footer text-gray-700">
-  <div class="mx-auto max-w-7xl px-4 py-14 lg:px-8 xl:pl-10">
-    <div class="grid gap-10 md:grid-cols-3">
-      <div class="pt-5 md:pt-6">
-        <a href="/" class="inline-block transition hover:opacity-90">
+  <div class="mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-14 xl:pl-10">
+    <div class="flex flex-col gap-6 md:grid md:grid-cols-3 md:gap-10">
+      <div class="md:pt-6">
+        <a href="/" class="footer-brand-link inline-block max-w-[15.5rem] transition hover:opacity-90 md:max-w-none">
           <BrandMark variant="footer" />
         </a>
       </div>
-      <div>
-        <p class="mb-4 text-sm font-bold text-navy">바로가기</p>
-        <ul class="space-y-2.5 text-sm">
-          {
-            nav.items.map((item) => (
-              <li>
-                <a href={item.href} class="transition hover:text-gold">
-                  {item.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-      <div>
-        <p class="mb-4 text-sm font-bold text-navy">연락처</p>
-        <ul class="space-y-1.5 text-sm">
-          <li>{company.address}</li>
-          <li>Tel. {company.tel}</li>
-          <li>Fax. {company.fax}</li>
-          <li>
-            <a href={`mailto:${company.email}`} class="transition hover:text-gold">{company.email}</a>
-          </li>
-        </ul>
+      <div class="grid grid-cols-2 gap-x-5 gap-y-4 md:contents">
+        <div>
+          <p class="mb-2 text-sm font-bold text-navy md:mb-4">바로가기</p>
+          <ul class="space-y-1.5 text-xs leading-snug sm:text-sm md:space-y-2.5">
+            {
+              nav.items.map((item) => (
+                <li>
+                  <a href={item.href} class="transition hover:text-gold">
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div>
+          <p class="mb-2 text-sm font-bold text-navy md:mb-4">연락처</p>
+          <ul class="space-y-1 text-xs leading-snug sm:text-sm md:space-y-1.5">
+            <li class="break-keep">{company.address}</li>
+            <li>Tel. {company.tel}</li>
+            <li>Fax. {company.fax}</li>
+            <li>
+              <a href={`mailto:${company.email}`} class="break-all transition hover:text-gold">
+                {company.email}
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    <div class="site-footer-divider mt-10 border-t pt-6 text-xs text-gray-500">
+    <div class="site-footer-divider mt-6 border-t pt-5 text-xs text-gray-500 md:mt-10 md:pt-6">
       <p>
         {company.businessNumber && `사업자등록번호 ${company.businessNumber} | `}
         대표 {company.ceo} | {company.nameFull}

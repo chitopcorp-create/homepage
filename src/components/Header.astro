@@ -128,87 +128,87 @@ const navGap =
     style="top: var(--site-header-height, 5.5rem);"
     aria-hidden="true"
   >
-    <div class="mobile-menu-drawer__head flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
-      <button
-        type="button"
-        id="mobile-submenu-back"
-        class="hidden items-center gap-1 text-sm font-medium text-gray-600 transition hover:text-navy"
-        aria-label="주메뉴로 돌아가기"
-      >
-        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
-        <span id="mobile-submenu-back-label">주메뉴</span>
-      </button>
+    <div class="mobile-menu-drawer__head flex shrink-0 items-center justify-end border-b border-gray-200 px-4 py-3">
       <button
         type="button"
         id="mobile-menu-close"
-        class="ml-auto text-sm font-medium text-gray-600 transition hover:text-navy"
+        class="text-sm font-medium text-gray-600 transition hover:text-navy"
       >
         메인메뉴 닫기
       </button>
     </div>
 
-    <div class="mobile-menu-viewport min-h-0 flex-1 overflow-hidden">
-      <div
-        id="mobile-menu-track"
-        class="mobile-menu-track flex h-full w-[200%] transition-transform duration-300 ease-out"
-      >
-        <nav class="mobile-menu-main w-1/2 shrink-0 overflow-y-auto overscroll-contain" aria-label="모바일 주메뉴">
-          {
-            nav.items.map((item) => {
-              const hasChildren = (item.children?.length ?? 0) > 0;
+    <nav class="mobile-menu-nav min-h-0 flex-1 overflow-y-auto overscroll-contain" aria-label="모바일 메뉴">
+      {
+        nav.items.map((item) => {
+          const submenuId = `mobile-submenu-${item.href.replace(/^\//, '').split(/[#?]/)[0] || 'home'}`;
+          const hasChildren = (item.children?.length ?? 0) > 0;
 
-              return hasChildren ? (
-                <div class="flex min-h-[3.5rem] items-stretch border-b border-gray-200">
-                  <button
-                    type="button"
-                    class="mobile-main-drill flex min-w-0 flex-1 items-center px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-gold"
-                    data-submenu-title={item.label}
-                    data-submenu-children={JSON.stringify(item.children)}
-                  >
-                    {item.label}
-                  </button>
-                  <button
-                    type="button"
-                    class="mobile-main-drill flex w-14 shrink-0 items-center justify-center text-gray-400 transition hover:bg-gray-50 hover:text-gold"
-                    data-submenu-title={item.label}
-                    data-submenu-children={JSON.stringify(item.children)}
-                    aria-label={`${item.label} 하위 메뉴`}
-                  >
-                    <svg
-                      class="h-5 w-5 shrink-0"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      aria-hidden="true"
+          return (
+            <div class="mobile-nav-item border-b border-gray-200" data-mobile-accordion>
+              {hasChildren ? (
+                <>
+                  <div class="flex min-h-[3.5rem] items-stretch">
+                    <button
+                      type="button"
+                      class="mobile-accordion-toggle flex min-w-0 flex-1 items-center px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-gold"
+                      aria-expanded="false"
+                      aria-controls={submenuId}
                     >
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
+                      {item.label}
+                    </button>
+                    <button
+                      type="button"
+                      class="mobile-accordion-toggle flex w-14 shrink-0 items-center justify-center text-gray-400 transition hover:bg-gray-50 hover:text-gold"
+                      aria-expanded="false"
+                      aria-controls={submenuId}
+                      aria-label={`${item.label} 하위 메뉴`}
+                    >
+                      <svg
+                        class="mobile-accordion-chevron h-5 w-5 shrink-0 transition-transform duration-300 ease-out"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        aria-hidden="true"
+                      >
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div id={submenuId} class="mobile-accordion-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                    <div class="overflow-hidden">
+                      <ul class="border-t border-gray-100 bg-[#f5f6f8]">
+                        {item.children!.map((child) => (
+                          <li class="border-b border-gray-200/80 last:border-b-0">
+                            <a
+                              href={child.href}
+                              class="mobile-sub-link block whitespace-nowrap overflow-hidden text-ellipsis px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold"
+                            >
+                              {child.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <a
                   href={item.href}
                   class:list={[
-                    'mobile-nav-link flex min-h-[3.5rem] items-center border-b border-gray-200 px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-gold',
+                    'mobile-nav-link flex min-h-[3.5rem] items-center px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-gold',
                     isActive(item.href) ? 'text-gold' : '',
                   ]}
                 >
                   {item.label}
                 </a>
-              );
-            })
-          }
-        </nav>
-
-        <div class="mobile-menu-sub w-1/2 shrink-0 overflow-y-auto overscroll-contain bg-white">
-          <p id="mobile-submenu-title" class="sr-only"></p>
-          <ul id="mobile-submenu-list" class="mobile-submenu-list" aria-label="모바일 소메뉴"></ul>
-        </div>
-      </div>
-    </div>
+              )}
+            </div>
+          );
+        })
+      }
+    </nav>
   </div>
 </header>
 
@@ -221,15 +221,16 @@ const navGap =
     opacity: 1;
   }
 
-  .mobile-menu-track.is-sub {
-    transform: translateX(-50%);
+  .mobile-accordion-panel.is-open {
+    grid-template-rows: 1fr;
   }
 
-  .mobile-submenu-list a {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .mobile-nav-item:has(.mobile-accordion-panel.is-open) .mobile-accordion-chevron {
+    transform: rotate(180deg);
+  }
+
+  .mobile-nav-item:has(.mobile-accordion-panel.is-open) .mobile-accordion-toggle {
+    color: #c9a227;
   }
 </style>
 
@@ -249,42 +250,30 @@ const navGap =
 
   let megaOpen = false;
 
-  const mobileMenuTrack = document.getElementById('mobile-menu-track');
-  const mobileSubmenuBack = document.getElementById('mobile-submenu-back');
-  const mobileSubmenuBackLabel = document.getElementById('mobile-submenu-back-label');
-  const mobileSubmenuTitle = document.getElementById('mobile-submenu-title');
-  const mobileSubmenuList = document.getElementById('mobile-submenu-list');
-
-  const showMobileMainPanel = () => {
-    mobileMenuTrack?.classList.remove('is-sub');
-    mobileSubmenuBack?.classList.add('hidden');
-    mobileSubmenuBack?.classList.remove('flex');
-    mobileMenuClose?.classList.remove('hidden');
+  const closeAllMobileAccordions = () => {
+    if (!mobileMenu) return;
+    mobileMenu.querySelectorAll<HTMLElement>('.mobile-accordion-panel').forEach((panel) => {
+      panel.classList.remove('is-open');
+    });
+    mobileMenu.querySelectorAll<HTMLButtonElement>('.mobile-accordion-toggle').forEach((btn) => {
+      btn.setAttribute('aria-expanded', 'false');
+    });
   };
 
-  const showMobileSubPanel = (title: string, children: { label: string; href: string }[]) => {
-    if (!mobileSubmenuList || !mobileMenuTrack) return;
+  const toggleMobileAccordion = (controlsId: string) => {
+    if (!mobileMenu) return;
+    const panel = document.getElementById(controlsId);
+    if (!panel) return;
 
-    mobileSubmenuTitle && (mobileSubmenuTitle.textContent = title);
-    if (mobileSubmenuBackLabel) mobileSubmenuBackLabel.textContent = title;
-    mobileSubmenuList.replaceChildren();
-    children.forEach((child) => {
-      const li = document.createElement('li');
-      li.className = 'border-b border-gray-200';
-      const link = document.createElement('a');
-      link.href = child.href;
-      link.textContent = child.label;
-      link.className =
-        'mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold';
-      link.addEventListener('click', () => setMobileMenuOpen(false));
-      li.append(link);
-      mobileSubmenuList.append(li);
-    });
+    const isOpen = panel.classList.contains('is-open');
+    closeAllMobileAccordions();
 
-    mobileMenuTrack.classList.add('is-sub');
-    mobileSubmenuBack?.classList.remove('hidden');
-    mobileSubmenuBack?.classList.add('flex');
-    mobileMenuClose?.classList.add('hidden');
+    if (!isOpen) {
+      panel.classList.add('is-open');
+      mobileMenu
+        .querySelectorAll<HTMLButtonElement>(`.mobile-accordion-toggle[aria-controls="${controlsId}"]`)
+        .forEach((btn) => btn.setAttribute('aria-expanded', 'true'));
+    }
   };
 
   const setMobileMenuOpen = (open: boolean) => {
@@ -304,9 +293,9 @@ const navGap =
       hideMega();
       setSolidBar();
       syncHeaderHeight();
-      showMobileMainPanel();
+      closeAllMobileAccordions();
     } else {
-      showMobileMainPanel();
+      closeAllMobileAccordions();
       updateHeaderOnScroll();
     }
   };
@@ -426,28 +415,14 @@ const navGap =
     setSolidBar();
   }
 
-  const openMobileDrill = (btn: HTMLButtonElement) => {
-    const title = btn.dataset.submenuTitle ?? '';
-    const raw = btn.dataset.submenuChildren;
-    if (!title || !raw) return;
-    try {
-      const children = JSON.parse(raw) as { label: string; href: string }[];
-      showMobileSubPanel(title, children);
-    } catch {
-      /* ignore malformed data */
-    }
-  };
-
-  mobileMenu?.querySelectorAll<HTMLButtonElement>('.mobile-main-drill').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openMobileDrill(btn);
+  mobileMenu?.querySelectorAll<HTMLButtonElement>('.mobile-accordion-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const controlsId = btn.getAttribute('aria-controls');
+      if (controlsId) toggleMobileAccordion(controlsId);
     });
   });
 
-  mobileSubmenuBack?.addEventListener('click', showMobileMainPanel);
-
-  mobileMenu?.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link').forEach((link) => {
+  mobileMenu?.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link, .mobile-sub-link').forEach((link) => {
     link.addEventListener('click', () => setMobileMenuOpen(false));
   });
 
