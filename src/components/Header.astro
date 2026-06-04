@@ -124,84 +124,81 @@ const navGap =
 
   <div
     id="mobile-menu"
-    class="mobile-menu-drawer fixed left-0 right-0 bottom-0 z-[45] hidden overflow-y-auto overscroll-contain bg-white md:hidden"
+    class="mobile-menu-drawer fixed left-0 right-0 bottom-0 z-[45] hidden flex-col overflow-hidden bg-white md:hidden"
     style="top: var(--site-header-height, 5.5rem);"
     aria-hidden="true"
   >
-    <div class="mobile-menu-drawer__head flex items-center justify-end border-b border-gray-200 px-4 py-3">
+    <div class="mobile-menu-drawer__head flex shrink-0 items-center justify-between border-b border-gray-200 px-4 py-3">
+      <button
+        type="button"
+        id="mobile-submenu-back"
+        class="hidden items-center gap-1 text-sm font-medium text-gray-600 transition hover:text-navy"
+        aria-label="주메뉴로 돌아가기"
+      >
+        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span id="mobile-submenu-back-label">주메뉴</span>
+      </button>
       <button
         type="button"
         id="mobile-menu-close"
-        class="text-sm font-medium text-gray-600 transition hover:text-navy"
+        class="ml-auto text-sm font-medium text-gray-600 transition hover:text-navy"
       >
         메인메뉴 닫기
       </button>
     </div>
 
-    <nav class="mobile-menu-nav" aria-label="모바일 메뉴">
-      {
-        nav.items.map((item) => {
-          const submenuId = `mobile-submenu-${item.href.replace(/^\//, '').split(/[#?]/)[0] || 'home'}`;
-          const hasChildren = (item.children?.length ?? 0) > 0;
+    <div class="mobile-menu-viewport min-h-0 flex-1 overflow-hidden">
+      <div
+        id="mobile-menu-track"
+        class="mobile-menu-track flex h-full w-[200%] transition-transform duration-300 ease-out"
+      >
+        <nav class="mobile-menu-main w-1/2 shrink-0 overflow-y-auto overscroll-contain" aria-label="모바일 주메뉴">
+          {
+            nav.items.map((item) => {
+              const hasChildren = (item.children?.length ?? 0) > 0;
 
-          return (
-            <div class="mobile-nav-item border-b border-gray-200">
-              <div class="mobile-nav-item__row flex min-h-[3.5rem] items-stretch">
+              return hasChildren ? (
+                <button
+                  type="button"
+                  class="mobile-main-drill flex w-full min-h-[3.5rem] items-center justify-between gap-3 border-b border-gray-200 px-5 text-left text-[1.0625rem] font-bold tracking-tight text-navy transition hover:bg-gray-50 hover:text-gold"
+                  data-submenu-title={item.label}
+                  data-submenu-children={JSON.stringify(item.children)}
+                >
+                  <span>{item.label}</span>
+                  <svg
+                    class="h-5 w-5 shrink-0 text-gray-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    aria-hidden="true"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              ) : (
                 <a
                   href={item.href}
                   class:list={[
-                    'mobile-nav-link flex min-w-0 flex-1 items-center px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-gold',
+                    'mobile-nav-link flex min-h-[3.5rem] items-center border-b border-gray-200 px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-gold',
                     isActive(item.href) ? 'text-gold' : '',
                   ]}
                 >
                   {item.label}
                 </a>
-                {hasChildren ? (
-                  <button
-                    type="button"
-                    class="mobile-submenu-toggle flex w-14 shrink-0 items-center justify-center text-navy transition hover:bg-gray-50"
-                    aria-expanded="false"
-                    aria-controls={submenuId}
-                    aria-label={`${item.label} 하위 메뉴 펼치기`}
-                  >
-                    <svg
-                      class="mobile-submenu-chevron h-5 w-5 shrink-0 transition-transform duration-200"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      aria-hidden="true"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
-                ) : (
-                  <span class="w-14 shrink-0" aria-hidden="true" />
-                )}
-              </div>
-              {hasChildren ? (
-                <ul
-                  id={submenuId}
-                  class="mobile-submenu-panel hidden border-t border-gray-100 bg-[#f5f6f8]"
-                  data-mobile-submenu
-                >
-                  {item.children!.map((child) => (
-                    <li class="border-b border-gray-200/80 last:border-b-0">
-                      <a
-                        href={child.href}
-                        class="mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold"
-                      >
-                        {child.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          );
-        })
-      }
-    </nav>
+              );
+            })
+          }
+        </nav>
+
+        <div class="mobile-menu-sub w-1/2 shrink-0 overflow-y-auto overscroll-contain bg-white">
+          <p id="mobile-submenu-title" class="sr-only"></p>
+          <ul id="mobile-submenu-list" class="mobile-submenu-list" aria-label="모바일 소메뉴"></ul>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -214,12 +211,15 @@ const navGap =
     opacity: 1;
   }
 
-  .mobile-nav-item:has(.mobile-submenu-panel:not(.hidden)) .mobile-submenu-chevron {
-    transform: rotate(180deg);
+  .mobile-menu-track.is-sub {
+    transform: translateX(-50%);
   }
 
-  .mobile-nav-item:has(.mobile-submenu-panel:not(.hidden)) .mobile-submenu-toggle {
-    color: #c9a227;
+  .mobile-submenu-list a {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>
 
@@ -239,21 +239,49 @@ const navGap =
 
   let megaOpen = false;
 
-  const closeAllMobileSubmenus = () => {
-    if (!mobileMenu) return;
-    mobileMenu.querySelectorAll<HTMLElement>('[data-mobile-submenu]').forEach((panel) => {
-      panel.classList.add('hidden');
+  const mobileMenuTrack = document.getElementById('mobile-menu-track');
+  const mobileSubmenuBack = document.getElementById('mobile-submenu-back');
+  const mobileSubmenuBackLabel = document.getElementById('mobile-submenu-back-label');
+  const mobileSubmenuTitle = document.getElementById('mobile-submenu-title');
+  const mobileSubmenuList = document.getElementById('mobile-submenu-list');
+
+  const showMobileMainPanel = () => {
+    mobileMenuTrack?.classList.remove('is-sub');
+    mobileSubmenuBack?.classList.add('hidden');
+    mobileSubmenuBack?.classList.remove('flex');
+    mobileMenuClose?.classList.remove('hidden');
+  };
+
+  const showMobileSubPanel = (title: string, children: { label: string; href: string }[]) => {
+    if (!mobileSubmenuList || !mobileMenuTrack) return;
+
+    mobileSubmenuTitle && (mobileSubmenuTitle.textContent = title);
+    if (mobileSubmenuBackLabel) mobileSubmenuBackLabel.textContent = title;
+    mobileSubmenuList.replaceChildren();
+    children.forEach((child) => {
+      const li = document.createElement('li');
+      li.className = 'border-b border-gray-200';
+      const link = document.createElement('a');
+      link.href = child.href;
+      link.textContent = child.label;
+      link.className =
+        'mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold';
+      link.addEventListener('click', () => setMobileMenuOpen(false));
+      li.append(link);
+      mobileSubmenuList.append(li);
     });
-    mobileMenu.querySelectorAll<HTMLButtonElement>('.mobile-submenu-toggle').forEach((btn) => {
-      btn.setAttribute('aria-expanded', 'false');
-      btn.querySelector('.mobile-submenu-chevron')?.classList.remove('rotate-180');
-    });
+
+    mobileMenuTrack.classList.add('is-sub');
+    mobileSubmenuBack?.classList.remove('hidden');
+    mobileSubmenuBack?.classList.add('flex');
+    mobileMenuClose?.classList.add('hidden');
   };
 
   const setMobileMenuOpen = (open: boolean) => {
     if (!mobileMenu || !menuBtn) return;
 
     mobileMenu.classList.toggle('hidden', !open);
+    mobileMenu.classList.toggle('flex', open);
     mobileMenu.setAttribute('aria-hidden', String(!open));
     mobileMenuBackdrop?.classList.toggle('hidden', !open);
     mobileMenuBackdrop?.setAttribute('aria-hidden', String(!open));
@@ -266,23 +294,11 @@ const navGap =
       hideMega();
       setSolidBar();
       syncHeaderHeight();
+      showMobileMainPanel();
     } else {
-      closeAllMobileSubmenus();
+      showMobileMainPanel();
       updateHeaderOnScroll();
     }
-  };
-
-  const openMobileSubmenu = (panelId: string) => {
-    if (!mobileMenu) return;
-    closeAllMobileSubmenus();
-    const panel = document.getElementById(panelId);
-    const toggle = mobileMenu.querySelector<HTMLButtonElement>(
-      `.mobile-submenu-toggle[aria-controls="${panelId}"]`
-    );
-    if (!panel || !toggle) return;
-    panel.classList.remove('hidden');
-    toggle.setAttribute('aria-expanded', 'true');
-    toggle.querySelector('.mobile-submenu-chevron')?.classList.add('rotate-180');
   };
 
   const syncMegaPanelHeight = () => {
@@ -400,21 +416,23 @@ const navGap =
     setSolidBar();
   }
 
-  mobileMenu?.querySelectorAll<HTMLButtonElement>('.mobile-submenu-toggle').forEach((btn) => {
+  mobileMenu?.querySelectorAll<HTMLButtonElement>('.mobile-main-drill').forEach((btn) => {
     btn.addEventListener('click', () => {
-      const panelId = btn.getAttribute('aria-controls');
-      if (!panelId) return;
-      const panel = document.getElementById(panelId);
-      const isOpen = panel && !panel.classList.contains('hidden');
-      if (isOpen) {
-        closeAllMobileSubmenus();
-      } else {
-        openMobileSubmenu(panelId);
+      const title = btn.dataset.submenuTitle ?? '';
+      const raw = btn.dataset.submenuChildren;
+      if (!title || !raw) return;
+      try {
+        const children = JSON.parse(raw) as { label: string; href: string }[];
+        showMobileSubPanel(title, children);
+      } catch {
+        /* ignore malformed data */
       }
     });
   });
 
-  mobileMenu?.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link, .mobile-sub-link').forEach((link) => {
+  mobileSubmenuBack?.addEventListener('click', showMobileMainPanel);
+
+  mobileMenu?.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link').forEach((link) => {
     link.addEventListener('click', () => setMobileMenuOpen(false));
   });
 

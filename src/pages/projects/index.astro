@@ -24,15 +24,22 @@ const projects = [...projectsData.projects].sort((a, b) => {
 
   <section class="py-16">
     <div class="mx-auto max-w-7xl px-4 lg:px-8">
-      <div class="flex flex-wrap gap-2" role="tablist" aria-label="실적 카테고리">
+      <div
+        class="projects-filter-tabs grid w-full grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-8 lg:gap-3"
+        role="tablist"
+        aria-label="실적 카테고리"
+      >
         {
           categories.map((cat, i) => (
             <button
               type="button"
-              class="filter-btn rounded-full border border-gray-200 px-5 py-2 text-sm font-medium transition hover:border-navy hover:text-navy"
+              class:list={[
+                'filter-btn flex min-h-[3.25rem] w-full items-center justify-center rounded-md border border-gray-200 px-1.5 py-2.5 text-center text-xs font-semibold leading-snug transition sm:min-h-[3.5rem] sm:px-2 sm:text-sm lg:min-h-[4.25rem] lg:rounded-lg lg:px-3 lg:text-[1.0625rem] lg:tracking-tight',
+                'hover:border-navy hover:text-navy',
+                i === 0 && 'border-navy bg-navy text-white hover:text-white',
+              ]}
               data-category={cat}
               aria-pressed={i === 0 ? 'true' : 'false'}
-              class:list={[i === 0 && 'bg-navy text-white border-navy']}
             >
               {cat}
             </button>
@@ -102,6 +109,8 @@ const projects = [...projectsData.projects].sort((a, b) => {
       b.classList.toggle('bg-navy', active);
       b.classList.toggle('text-white', active);
       b.classList.toggle('border-navy', active);
+      b.classList.toggle('hover:text-white', active);
+      b.classList.toggle('hover:text-navy', !active);
     });
 
     const matching: HTMLElement[] = [];
