@@ -22,6 +22,19 @@
   border-color: #b8bec8;
 }
 
+/* 푸터 로고: JS 로드 전·모바일에서도 항상 표시 */
+#site-footer [data-brand-mark][data-variant='footer'] .brand-logo-shell {
+  flex-shrink: 0;
+}
+
+#site-footer [data-brand-mark][data-variant='footer'] .brand-logo {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+}
+
 /* 메인 영상 위: 투명 헤더(영상이 비침), 메뉴·로고는 밝은 색 */
 #site-header.header-over-video {
   background: transparent;

@@ -38,6 +38,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
     class:list={[
       'brand-logo-shell flex shrink-0 items-center justify-center overflow-hidden',
       !isFooter && 'max-md:h-12 max-md:w-12',
+      isFooter && 'h-11 min-h-[2.75rem] min-w-[2.75rem] sm:h-[5.5rem] sm:min-h-[5.5rem]',
     ]}
   >
     <img
