@@ -108,33 +108,64 @@ const navGap =
   >
     <nav class="flex flex-col px-4 py-2" aria-label="모바일 메뉴">
       {
-        nav.items.map((item) => (
-          <div class="border-b border-gray-100 py-1">
-            <a
-              href={item.href}
-              class:list={[
-                'block py-3 text-base font-semibold text-navy transition hover:text-gold',
-                isActive(item.href) ? 'text-gold' : '',
-              ]}
-            >
-              {item.label}
-            </a>
-            {item.children?.length ? (
-              <ul class="mb-3 ml-3 space-y-1 border-l-2 border-gold/30 pl-4">
-                {item.children.map((child) => (
-                  <li>
-                    <a
-                      href={child.href}
-                      class="block py-2 text-sm text-gray-600 transition hover:text-gold"
+        nav.items.map((item) => {
+          const submenuId = `mobile-submenu-${item.href.replace(/^\//, '').split(/[#?]/)[0] || 'home'}`;
+          const hasChildren = (item.children?.length ?? 0) > 0;
+
+          return (
+            <div class="mobile-nav-item border-b border-gray-100">
+              <div class="flex items-center gap-1">
+                <a
+                  href={item.href}
+                  class:list={[
+                    'min-w-0 flex-1 py-3.5 text-base font-semibold text-navy transition hover:text-gold',
+                    isActive(item.href) ? 'text-gold' : '',
+                  ]}
+                >
+                  {item.label}
+                </a>
+                {hasChildren ? (
+                  <button
+                    type="button"
+                    class="mobile-submenu-toggle flex h-11 w-11 shrink-0 items-center justify-center rounded text-navy transition hover:bg-gray-100 hover:text-gold"
+                    aria-expanded="false"
+                    aria-controls={submenuId}
+                    aria-label={`${item.label} 하위 메뉴`}
+                  >
+                    <svg
+                      class="mobile-submenu-chevron h-5 w-5 transition-transform duration-200"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      aria-hidden="true"
                     >
-                      {child.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </div>
-        ))
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                ) : null}
+              </div>
+              {hasChildren ? (
+                <ul
+                  id={submenuId}
+                  class="mobile-submenu-panel hidden border-l-2 border-gold/30 pb-3 pl-4 ml-1 mb-1 space-y-0.5"
+                  data-mobile-submenu
+                >
+                  {item.children!.map((child) => (
+                    <li>
+                      <a
+                        href={child.href}
+                        class="block py-2.5 text-sm text-gray-600 transition hover:text-gold"
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          );
+        })
       }
     </nav>
   </div>
@@ -153,6 +184,30 @@ const navGap =
   const videoHeaderClasses = ['header-over-video'];
 
   let megaOpen = false;
+
+  const closeAllMobileSubmenus = () => {
+    if (!mobileMenu) return;
+    mobileMenu.querySelectorAll<HTMLElement>('[data-mobile-submenu]').forEach((panel) => {
+      panel.classList.add('hidden');
+    });
+    mobileMenu.querySelectorAll<HTMLButtonElement>('.mobile-submenu-toggle').forEach((btn) => {
+      btn.setAttribute('aria-expanded', 'false');
+      btn.querySelector('.mobile-submenu-chevron')?.classList.remove('rotate-90');
+    });
+  };
+
+  const openMobileSubmenu = (panelId: string) => {
+    if (!mobileMenu) return;
+    closeAllMobileSubmenus();
+    const panel = document.getElementById(panelId);
+    const toggle = mobileMenu.querySelector<HTMLButtonElement>(
+      `.mobile-submenu-toggle[aria-controls="${panelId}"]`
+    );
+    if (!panel || !toggle) return;
+    panel.classList.remove('hidden');
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.querySelector('.mobile-submenu-chevron')?.classList.add('rotate-90');
+  };
 
   const syncMegaPanelHeight = () => {
     if (!mega || !desktopNav) return;
@@ -180,6 +235,7 @@ const navGap =
       mobileMenu.classList.add('hidden');
       mobileMenu.setAttribute('aria-hidden', 'true');
       menuBtn?.setAttribute('aria-expanded', 'false');
+      closeAllMobileSubmenus();
     }
   };
 
@@ -271,6 +327,29 @@ const navGap =
     setSolidBar();
   }
 
+  mobileMenu?.querySelectorAll<HTMLButtonElement>('.mobile-submenu-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const panelId = btn.getAttribute('aria-controls');
+      if (!panelId) return;
+      const panel = document.getElementById(panelId);
+      const isOpen = panel && !panel.classList.contains('hidden');
+      if (isOpen) {
+        closeAllMobileSubmenus();
+      } else {
+        openMobileSubmenu(panelId);
+      }
+    });
+  });
+
+  mobileMenu?.querySelectorAll<HTMLAnchorElement>('[data-mobile-submenu] a').forEach((link) => {
+    link.addEventListener('click', () => {
+      mobileMenu?.classList.add('hidden');
+      mobileMenu?.setAttribute('aria-hidden', 'true');
+      menuBtn?.setAttribute('aria-expanded', 'false');
+      closeAllMobileSubmenus();
+    });
+  });
+
   menuBtn?.addEventListener('click', () => {
     const isOpen = mobileMenu?.classList.toggle('hidden') === false;
     menuBtn.setAttribute('aria-expanded', String(isOpen));
@@ -279,6 +358,7 @@ const navGap =
       hideMega();
       setSolidBar();
     } else {
+      closeAllMobileSubmenus();
       updateHeaderOnScroll();
     }
   });
