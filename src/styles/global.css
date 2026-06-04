@@ -238,6 +238,35 @@
   top: var(--site-header-height, 5.5rem);
 }
 
+/* 모바일: 한화 건설 m.hwenc 스타일 가로 스크롤 소메뉴 */
+@media (max-width: 767px) {
+  .page-submenu-sticky nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #c9a227 transparent;
+  }
+
+  .page-submenu-sticky nav > ul {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .page-submenu-sticky nav > ul > li {
+    flex-shrink: 0;
+  }
+
+  .page-submenu-sticky .hero-submenu-link {
+    width: auto;
+    white-space: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
 @layer utilities {
   .fade-in {
     animation: fadeIn 0.8s ease-out forwards;

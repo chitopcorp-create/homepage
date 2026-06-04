@@ -176,20 +176,28 @@ const navGap =
                       </svg>
                     </button>
                   </div>
-                  <div id={submenuId} class="mobile-accordion-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out">
+                  <div
+                    id={submenuId}
+                    class="mobile-accordion-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
+                  >
                     <div class="overflow-hidden">
-                      <ul class="border-t border-gray-100 bg-[#f5f6f8]">
-                        {item.children!.map((child) => (
-                          <li class="border-b border-gray-200/80 last:border-b-0">
-                            <a
-                              href={child.href}
-                              class="mobile-sub-link block whitespace-nowrap overflow-hidden text-ellipsis px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold"
-                            >
-                              {child.label}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
+                      <div
+                        class="mobile-submenu-scroll overflow-x-auto overscroll-x-contain border-t border-gray-100 bg-[#f5f6f8]"
+                        tabindex="0"
+                      >
+                        <ul class="flex w-max min-w-full flex-nowrap items-stretch px-2 py-1">
+                          {item.children!.map((child) => (
+                            <li class="shrink-0">
+                              <a
+                                href={child.href}
+                                class="mobile-sub-link inline-flex min-h-[2.75rem] items-center whitespace-nowrap px-4 py-2.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold"
+                              >
+                                {child.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </>
@@ -231,6 +239,30 @@ const navGap =
 
   .mobile-nav-item:has(.mobile-accordion-panel.is-open) .mobile-accordion-toggle {
     color: #c9a227;
+  }
+
+  .mobile-submenu-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #c9a227 transparent;
+  }
+
+  .mobile-submenu-scroll::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  .mobile-submenu-scroll::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: #c9a227;
+  }
+
+  .mobile-sub-link {
+    border-bottom: 2px solid transparent;
+  }
+
+  .mobile-sub-link:active {
+    color: #c9a227;
+    border-bottom-color: #c9a227;
   }
 </style>
 
