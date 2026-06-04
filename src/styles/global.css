@@ -187,6 +187,34 @@
   --site-header-height: 5.5rem;
 }
 
+/* 모바일 전체메뉴(한화 건설 m.hwenc 스타일) 열림 */
+#site-header.header-mobile-open {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+  box-shadow: none;
+}
+
+#site-header.header-mobile-open .brand-name-main,
+#site-header.header-mobile-open .brand-name-suffix,
+#site-header.header-mobile-open .brand-en {
+  color: #0f1f3d;
+  text-shadow: none;
+}
+
+#site-header.header-mobile-open .brand-en {
+  color: rgba(15, 31, 61, 0.65);
+}
+
+#site-header.header-mobile-open .header-menu-btn {
+  color: #0f1f3d;
+}
+
+#site-header.header-mobile-open .header-bar {
+  position: relative;
+  z-index: 50;
+  border-bottom: 1px solid #e5e7eb;
+}
+
 /* 회사소개 등: 스크롤 시 헤더 바로 아래 가로 소메뉴만 고정 */
 .page-submenu-sticky {
   top: var(--site-header-height, 5.5rem);

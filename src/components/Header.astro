@@ -80,13 +80,28 @@ const navGap =
         <button
           type="button"
           id="mobile-menu-btn"
-          class="header-menu-btn -mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded md:hidden"
-          aria-label="메뉴 열기"
+          class="header-menu-btn -mr-1 relative flex h-11 w-11 shrink-0 items-center justify-center rounded md:hidden"
+          aria-label="메인메뉴 열기"
           aria-expanded="false"
           aria-controls="mobile-menu"
         >
-          <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <svg
+            class="header-icon-menu h-7 w-7"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          <svg
+            class="header-icon-close absolute h-7 w-7 opacity-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 6l12 12M18 6L6 18" />
           </svg>
         </button>
       </div>
@@ -102,23 +117,40 @@ const navGap =
   </div>
 
   <div
+    id="mobile-menu-backdrop"
+    class="mobile-menu-backdrop fixed inset-0 z-[44] hidden bg-black/45 md:hidden"
+    aria-hidden="true"
+  />
+
+  <div
     id="mobile-menu"
-    class="mobile-menu-panel hidden border-t border-gray-200 bg-white md:hidden"
+    class="mobile-menu-drawer fixed left-0 right-0 bottom-0 z-[45] hidden overflow-y-auto overscroll-contain bg-white md:hidden"
+    style="top: var(--site-header-height, 5.5rem);"
     aria-hidden="true"
   >
-    <nav class="flex flex-col px-4 py-2" aria-label="모바일 메뉴">
+    <div class="mobile-menu-drawer__head flex items-center justify-end border-b border-gray-200 px-4 py-3">
+      <button
+        type="button"
+        id="mobile-menu-close"
+        class="text-sm font-medium text-gray-600 transition hover:text-navy"
+      >
+        메인메뉴 닫기
+      </button>
+    </div>
+
+    <nav class="mobile-menu-nav" aria-label="모바일 메뉴">
       {
         nav.items.map((item) => {
           const submenuId = `mobile-submenu-${item.href.replace(/^\//, '').split(/[#?]/)[0] || 'home'}`;
           const hasChildren = (item.children?.length ?? 0) > 0;
 
           return (
-            <div class="mobile-nav-item border-b border-gray-100">
-              <div class="flex items-center gap-1">
+            <div class="mobile-nav-item border-b border-gray-200">
+              <div class="mobile-nav-item__row flex min-h-[3.5rem] items-stretch">
                 <a
                   href={item.href}
                   class:list={[
-                    'min-w-0 flex-1 py-3.5 text-base font-semibold text-navy transition hover:text-gold',
+                    'mobile-nav-link flex min-w-0 flex-1 items-center px-5 text-[1.0625rem] font-bold tracking-tight text-navy transition hover:text-gold',
                     isActive(item.href) ? 'text-gold' : '',
                   ]}
                 >
@@ -127,35 +159,37 @@ const navGap =
                 {hasChildren ? (
                   <button
                     type="button"
-                    class="mobile-submenu-toggle flex h-11 w-11 shrink-0 items-center justify-center rounded text-navy transition hover:bg-gray-100 hover:text-gold"
+                    class="mobile-submenu-toggle flex w-14 shrink-0 items-center justify-center text-navy transition hover:bg-gray-50"
                     aria-expanded="false"
                     aria-controls={submenuId}
-                    aria-label={`${item.label} 하위 메뉴`}
+                    aria-label={`${item.label} 하위 메뉴 펼치기`}
                   >
                     <svg
-                      class="mobile-submenu-chevron h-5 w-5 transition-transform duration-200"
+                      class="mobile-submenu-chevron h-5 w-5 shrink-0 transition-transform duration-200"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      stroke-width="2"
+                      stroke-width="2.5"
                       aria-hidden="true"
                     >
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
-                ) : null}
+                ) : (
+                  <span class="w-14 shrink-0" aria-hidden="true" />
+                )}
               </div>
               {hasChildren ? (
                 <ul
                   id={submenuId}
-                  class="mobile-submenu-panel hidden border-l-2 border-gold/30 pb-3 pl-4 ml-1 mb-1 space-y-0.5"
+                  class="mobile-submenu-panel hidden border-t border-gray-100 bg-[#f5f6f8]"
                   data-mobile-submenu
                 >
                   {item.children!.map((child) => (
-                    <li>
+                    <li class="border-b border-gray-200/80 last:border-b-0">
                       <a
                         href={child.href}
-                        class="block py-2.5 text-sm text-gray-600 transition hover:text-gold"
+                        class="mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold"
                       >
                         {child.label}
                       </a>
@@ -171,9 +205,29 @@ const navGap =
   </div>
 </header>
 
+<style>
+  #site-header.header-mobile-open .header-icon-menu {
+    opacity: 0;
+  }
+
+  #site-header.header-mobile-open .header-icon-close {
+    opacity: 1;
+  }
+
+  .mobile-nav-item:has(.mobile-submenu-panel:not(.hidden)) .mobile-submenu-chevron {
+    transform: rotate(180deg);
+  }
+
+  .mobile-nav-item:has(.mobile-submenu-panel:not(.hidden)) .mobile-submenu-toggle {
+    color: #c9a227;
+  }
+</style>
+
 <script>
   const header = document.getElementById('site-header');
   const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenuClose = document.getElementById('mobile-menu-close');
+  const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
   const mobileMenu = document.getElementById('mobile-menu');
   const mega = document.getElementById('header-mega');
   const desktopNav = document.getElementById('desktop-nav');
@@ -192,8 +246,30 @@ const navGap =
     });
     mobileMenu.querySelectorAll<HTMLButtonElement>('.mobile-submenu-toggle').forEach((btn) => {
       btn.setAttribute('aria-expanded', 'false');
-      btn.querySelector('.mobile-submenu-chevron')?.classList.remove('rotate-90');
+      btn.querySelector('.mobile-submenu-chevron')?.classList.remove('rotate-180');
     });
+  };
+
+  const setMobileMenuOpen = (open: boolean) => {
+    if (!mobileMenu || !menuBtn) return;
+
+    mobileMenu.classList.toggle('hidden', !open);
+    mobileMenu.setAttribute('aria-hidden', String(!open));
+    mobileMenuBackdrop?.classList.toggle('hidden', !open);
+    mobileMenuBackdrop?.setAttribute('aria-hidden', String(!open));
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? '메인메뉴 닫기' : '메인메뉴 열기');
+    header?.classList.toggle('header-mobile-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+
+    if (open) {
+      hideMega();
+      setSolidBar();
+      syncHeaderHeight();
+    } else {
+      closeAllMobileSubmenus();
+      updateHeaderOnScroll();
+    }
   };
 
   const openMobileSubmenu = (panelId: string) => {
@@ -206,7 +282,7 @@ const navGap =
     if (!panel || !toggle) return;
     panel.classList.remove('hidden');
     toggle.setAttribute('aria-expanded', 'true');
-    toggle.querySelector('.mobile-submenu-chevron')?.classList.add('rotate-90');
+    toggle.querySelector('.mobile-submenu-chevron')?.classList.add('rotate-180');
   };
 
   const syncMegaPanelHeight = () => {
@@ -232,10 +308,7 @@ const navGap =
     header?.classList.remove(...solidHeaderClasses);
     header?.classList.add(...videoHeaderClasses);
     if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-      mobileMenu.classList.add('hidden');
-      mobileMenu.setAttribute('aria-hidden', 'true');
-      menuBtn?.setAttribute('aria-expanded', 'false');
-      closeAllMobileSubmenus();
+      setMobileMenuOpen(false);
     }
   };
 
@@ -341,31 +414,24 @@ const navGap =
     });
   });
 
-  mobileMenu?.querySelectorAll<HTMLAnchorElement>('[data-mobile-submenu] a').forEach((link) => {
-    link.addEventListener('click', () => {
-      mobileMenu?.classList.add('hidden');
-      mobileMenu?.setAttribute('aria-hidden', 'true');
-      menuBtn?.setAttribute('aria-expanded', 'false');
-      closeAllMobileSubmenus();
-    });
+  mobileMenu?.querySelectorAll<HTMLAnchorElement>('.mobile-nav-link, .mobile-sub-link').forEach((link) => {
+    link.addEventListener('click', () => setMobileMenuOpen(false));
   });
 
   menuBtn?.addEventListener('click', () => {
-    const isOpen = mobileMenu?.classList.toggle('hidden') === false;
-    menuBtn.setAttribute('aria-expanded', String(isOpen));
-    mobileMenu?.setAttribute('aria-hidden', String(!isOpen));
-    if (isOpen) {
-      hideMega();
-      setSolidBar();
-    } else {
-      closeAllMobileSubmenus();
-      updateHeaderOnScroll();
-    }
+    const isOpen = mobileMenu?.classList.contains('hidden') ?? true;
+    setMobileMenuOpen(isOpen);
   });
+
+  mobileMenuClose?.addEventListener('click', () => setMobileMenuOpen(false));
+  mobileMenuBackdrop?.addEventListener('click', () => setMobileMenuOpen(false));
 
   window.addEventListener('scroll', updateHeaderOnScroll, { passive: true });
   window.addEventListener('resize', () => {
     syncHeaderHeight();
+    if (window.matchMedia('(min-width: 768px)').matches && mobileMenu && !mobileMenu.classList.contains('hidden')) {
+      setMobileMenuOpen(false);
+    }
     updateHeaderOnScroll();
     if (megaOpen) syncMegaPanelHeight();
   }, { passive: true });
