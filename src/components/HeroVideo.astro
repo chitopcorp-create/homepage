@@ -50,16 +50,11 @@ const mobileImageFallback = '/images/hero-mobile.jpg';
 
 <style>
   .hero-video-section {
-    height: min(72svh, calc(100svh - var(--site-header-height, 4.5rem)));
-    min-height: 280px;
+    height: 100svh;
+    height: 100dvh;
+    min-height: 100svh;
+    min-height: 100dvh;
     transform: translateZ(0);
-  }
-
-  @media (min-width: 768px) {
-    .hero-video-section {
-      height: 100svh;
-      min-height: 100svh;
-    }
   }
 
   .hero-mobile-picture,
