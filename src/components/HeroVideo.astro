@@ -1,21 +1,132 @@
 ---
+const videoSrc = '/videos/hero.mp4';
+const posterSrc = '/images/hero-poster.webp';
+const mobileImageSrc = '/images/hero-mobile.webp';
+const mobileImageFallback = '/images/hero-mobile.jpg';
 ---
 
-<section id="hero-section" class="relative h-svh w-full bg-black" aria-label="메인 영상">
+<section id="hero-section" class="hero-video-section relative w-full overflow-hidden bg-black" aria-label="메인 영상">
+  <picture class="hero-mobile-picture md:hidden">
+    <source srcset={mobileImageSrc} type="image/webp" />
+    <img
+      src={mobileImageFallback}
+      alt=""
+      class="hero-mobile-img"
+      width={1200}
+      height={1600}
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
+
   <video
     id="hero-video"
-    class="absolute inset-0 h-full w-full object-cover"
+    class="hero-video hidden md:block"
+    width={1920}
+    height={1080}
+    poster={posterSrc}
     autoplay
     muted
     loop
     playsinline
     preload="auto"
+    disablepictureinpicture
+    disableremoteplayback
   >
-    <source src="/videos/hero.mp4" type="video/mp4" />
+    <source src={videoSrc} type="video/mp4" />
   </video>
+
+  <a
+    href="#highlights"
+    class="hero-scroll-hint absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1 text-white/90 transition hover:text-white md:bottom-8"
+    aria-label="아래 콘텐츠로 이동"
+  >
+    <span class="text-[11px] font-semibold tracking-wide">SCROLL</span>
+    <svg class="h-6 w-6 animate-bounce" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </a>
 </section>
+
+<style>
+  .hero-video-section {
+    height: min(72svh, calc(100svh - var(--site-header-height, 4.5rem)));
+    min-height: 280px;
+    transform: translateZ(0);
+  }
+
+  @media (min-width: 768px) {
+    .hero-video-section {
+      height: 100svh;
+      min-height: 100svh;
+    }
+  }
+
+  .hero-mobile-picture,
+  .hero-mobile-img,
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+  }
+
+  .hero-mobile-picture {
+    display: block;
+  }
+
+  .hero-video {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  @media (min-width: 768px) {
+    .hero-mobile-picture {
+      display: none;
+    }
+
+    .hero-video {
+      display: block;
+    }
+  }
+
+  .hero-scroll-hint {
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+  }
+</style>
 
 <script>
   const video = document.getElementById('hero-video') as HTMLVideoElement | null;
-  video?.play().catch(() => {});
+  const mq = window.matchMedia('(min-width: 768px)');
+
+  const playVideo = () => {
+    if (!video || !mq.matches) return;
+    video.setAttribute('playsinline', '');
+    video.muted = true;
+    video.play().catch(() => {});
+  };
+
+  const pauseVideo = () => {
+    if (!video || mq.matches) return;
+    video.pause();
+  };
+
+  if (video) {
+    playVideo();
+    mq.addEventListener('change', () => {
+      if (mq.matches) playVideo();
+      else pauseVideo();
+    });
+    video.addEventListener('loadeddata', playVideo, { once: true });
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        if (document.visibilityState === 'visible') playVideo();
+      },
+      { passive: true }
+    );
+    if (!mq.matches) pauseVideo();
+  }
 </script>

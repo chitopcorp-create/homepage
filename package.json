@@ -6,7 +6,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "build:draft": "astro build --base ./ --outDir ./draft-html",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "optimize:hero-video": "node scripts/optimize-hero-video.mjs",
+    "prepare:hero-mobile": "node scripts/prepare-hero-mobile.mjs"
   },
   "dependencies": {
     "astro": "^5.7.10"
@@ -14,6 +16,7 @@
   "devDependencies": {
     "@astrojs/sitemap": "^3.3.1",
     "@astrojs/tailwind": "^6.0.2",
+    "ffmpeg-static": "^5.2.0",
     "sharp": "^0.34.5",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"

@@ -77,7 +77,6 @@ const submenuLinkClass = (compact: boolean) =>
               style={immersiveBgStyle}
               aria-hidden="true"
             />
-            <div class="page-hero-immersive__overlay absolute inset-0" aria-hidden="true" />
             <section
               data-page-hero-root
               data-page-hero-title
@@ -192,36 +191,18 @@ const submenuLinkClass = (compact: boolean) =>
 }
 
 <style>
-  .page-hero-immersive__overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(15, 31, 61, 0.25) 0%,
-      rgba(15, 31, 61, 0.45) 55%,
-      rgba(15, 31, 61, 0.55) 100%
-    );
-  }
-
   .page-hero-title-band--immersive h1 {
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
   }
 
   .page-hero-title-band--image {
-    background-color: #0f1f3d;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
   }
 
-  .page-hero-title-band--image .page-hero-title-band__inner {
-    background: linear-gradient(
-      180deg,
-      rgba(15, 31, 61, 0.35) 0%,
-      rgba(15, 31, 61, 0.5) 100%
-    );
-  }
-
   .page-hero-title-band--image h1 {
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
   }
 </style>
 
@@ -309,8 +290,18 @@ const submenuLinkClass = (compact: boolean) =>
       scrollToHeroTop();
     };
 
+    const hideOrphanMainSections = (activeId: string) => {
+      const main = document.getElementById('main-content');
+      if (!main) return;
+      main.querySelectorAll<HTMLElement>('section[id]').forEach((section) => {
+        section.style.display = section.id === activeId ? '' : 'none';
+      });
+    };
+
     const showOnlySection = (id: string) => {
       if (sectionElements.length === 0) return;
+
+      hideOrphanMainSections(id);
 
       let shown = false;
       sectionElements.forEach((section) => {

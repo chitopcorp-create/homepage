@@ -46,6 +46,33 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? site.siteUrl);
     <meta name="twitter:card" content="summary_large_image" />
     <title>{pageTitle}</title>
     {
+      fullBleedHero && (
+        <>
+          <link
+            rel="preload"
+            href="/images/hero-mobile.webp"
+            as="image"
+            type="image/webp"
+            media="(max-width: 767px)"
+          />
+          <link
+            rel="preload"
+            href="/videos/hero.mp4"
+            as="video"
+            type="video/mp4"
+            media="(min-width: 768px)"
+          />
+          <link
+            rel="preload"
+            href="/images/hero-poster.webp"
+            as="image"
+            type="image/webp"
+            media="(min-width: 768px)"
+          />
+        </>
+      )
+    }
+    {
       tabHero && (
         <script is:inline>
           {`(function(){if(location.hash){history.scrollRestoration='manual';}})();`}

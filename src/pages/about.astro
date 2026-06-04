@@ -225,14 +225,14 @@ const aboutMenu = navigation.items.find((item) => item.label === '회사소개')
           zoom={company.mapZoom}
           address={company.address}
         />
-        <p class="border-t border-gray-100 bg-gray-50 px-4 py-2 text-right text-xs text-gray-500">
+        <p class="border-t border-gray-100 bg-gray-50 px-4 py-2 text-right">
           <a
             href={company.mapSearchUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="font-medium text-navy transition hover:text-[#38bdf8]"
+            class="text-base font-semibold text-[#03C75A] transition hover:text-[#02b350] md:text-lg"
           >
-            네이버 지도에서 크게 보기 →
+            네이버에서 보기 →
           </a>
         </p>
       </div>

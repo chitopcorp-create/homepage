@@ -5,3 +5,5 @@ draft-html.zip
 .astro/
 .env
 .DS_Store
+public/videos/hero.original.mp4
+public/images/hero-mobile-source.png
