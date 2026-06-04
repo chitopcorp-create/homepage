@@ -240,10 +240,15 @@ const submenuLinkClass = (compact: boolean) =>
 
 <script>
   const heroRoot = document.querySelector<HTMLElement>('[data-page-hero-root]');
-  if (heroRoot && window.location.hash) {
+  const hasHashOnLoad = !!window.location.hash;
+
+  if (hasHashOnLoad) {
     history.scrollRestoration = 'manual';
-    window.scrollTo(0, 0);
   }
+
+  const pinHeroTop = (behavior: ScrollBehavior = 'auto') => {
+    window.scrollTo({ top: 0, left: 0, behavior });
+  };
 
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-submenu-link]'));
 
@@ -303,9 +308,9 @@ const submenuLinkClass = (compact: boolean) =>
       return headerH + stickyH + 8;
     };
 
-    const scrollToHeroTop = () => {
+    const scrollToHeroTop = (smooth = true) => {
       syncHeaderHeight();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      pinHeroTop(smooth ? 'smooth' : 'auto');
     };
 
     const scrollToActiveSection = (sectionId: string) => {
@@ -416,7 +421,28 @@ const submenuLinkClass = (compact: boolean) =>
         }
       };
 
-      applySectionFromHash(false);
+      const initTabSubmenuFromUrl = () => {
+        applySectionFromHash(false);
+        if (hasHashOnLoad || window.location.hash) {
+          scrollToHeroTop(false);
+        }
+      };
+
+      initTabSubmenuFromUrl();
+
+      if (hasHashOnLoad) {
+        requestAnimationFrame(() => scrollToHeroTop(false));
+        window.addEventListener(
+          'load',
+          () => {
+            applySectionFromHash(false);
+            scrollToHeroTop(false);
+            setTimeout(() => scrollToHeroTop(false), 0);
+            setTimeout(() => scrollToHeroTop(false), 80);
+          },
+          { once: true }
+        );
+      }
 
       window.addEventListener('page-submenu-navigate', () => applySectionFromHash(true));
       window.addEventListener('hashchange', () => applySectionFromHash(true));
