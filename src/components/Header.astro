@@ -27,10 +27,10 @@ const navGap =
   data-immersive-hero={isImmersiveHeroPage ? 'true' : 'false'}
 >
   <div class="header-bar relative mx-auto max-w-7xl px-3 lg:px-8 xl:pl-10">
-    <div class="flex items-stretch gap-4 pt-3 lg:pt-4">
+    <div class="flex w-full items-center justify-between gap-3 pt-3 lg:gap-4 lg:pt-4">
       <a
         href="/"
-        class="group flex min-w-0 max-w-[calc(100vw-3.75rem)] items-center self-center overflow-hidden transition hover:opacity-90 sm:max-w-none"
+        class="group flex min-w-0 flex-1 items-center overflow-hidden pr-2 transition hover:opacity-90 md:flex-none md:pr-0"
         aria-label="홈"
       >
         <BrandMark variant="header" />
@@ -76,11 +76,11 @@ const navGap =
         }
       </nav>
 
-      <div class="flex shrink-0 items-center self-center md:min-w-[2.75rem]">
+      <div class="flex shrink-0 items-center md:min-w-[2.75rem]">
         <button
           type="button"
           id="mobile-menu-btn"
-          class="header-menu-btn flex h-11 w-11 items-center justify-center rounded md:hidden"
+          class="header-menu-btn -mr-1 flex h-11 w-11 shrink-0 items-center justify-center rounded md:hidden"
           aria-label="메뉴 열기"
           aria-expanded="false"
           aria-controls="mobile-menu"

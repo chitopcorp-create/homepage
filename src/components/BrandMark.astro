@@ -7,18 +7,17 @@ interface Props {
 
 const { variant = 'header' } = Astro.props;
 const isFooter = variant === 'footer';
-const isHeader = !isFooter;
 
 const nameMainClass = isFooter
   ? 'text-xl sm:text-[1.65rem]'
-  : 'text-base sm:text-lg md:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
+  : 'text-lg sm:text-xl md:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
 const enClass = isFooter
   ? 'text-[9px] sm:text-[10px]'
   : 'text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px]';
 
 const logoHeightPx = isFooter ? 88 : 82;
-const logoHeightMobilePx = 52;
-const textRatio = 0.75;
+const logoHeightMobilePx = 56;
+const textRatio = isFooter ? 0.75 : 0.88;
 
 const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' ').trim();
 ---
@@ -26,7 +25,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
 <div
   class:list={[
     'brand-mark flex min-w-0 max-w-full items-center',
-    isFooter ? 'gap-4 sm:flex-row' : 'gap-2 sm:gap-3 lg:gap-4',
+    isFooter ? 'gap-4 sm:flex-row' : 'gap-2.5 sm:gap-3 lg:gap-4',
     isFooter && 'flex-col sm:flex-row sm:items-center',
   ]}
   data-brand-mark
@@ -45,7 +44,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
     />
   </div>
 
-  <div class="brand-text flex min-w-0 max-w-full flex-col items-stretch overflow-hidden" data-brand-text>
+  <div class="brand-text flex min-w-0 max-w-full flex-col items-start overflow-hidden" data-brand-text>
     <div class="brand-name-row whitespace-nowrap leading-none" data-brand-name-ref>
       <span class:list={['brand-name-main font-bmhanna font-bold text-navy', nameMainClass]}>
         {company.nameMain}
@@ -57,50 +56,17 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
         {company.nameSuffix}
       </span>
     </div>
-    {
-      isHeader ? (
-        <>
-          <div
-            class:list={[
-              'brand-en-stacked mt-1 flex w-full max-w-full flex-col gap-0.5 leading-none md:hidden',
-              enClass,
-            ]}
-            data-brand-en-stacked
-            data-en-base="7"
-          >
-            <span class="brand-en-line block max-w-full overflow-hidden font-semibold uppercase text-navy">
-              {company.nameEnLeft}
-            </span>
-            <span class="brand-en-line block max-w-full overflow-hidden font-semibold uppercase text-navy">
-              {company.nameEnRight}
-            </span>
-          </div>
-          <p
-            class:list={[
-              'brand-en mt-1.5 hidden max-w-full overflow-hidden whitespace-nowrap font-semibold uppercase leading-none text-navy md:block',
-              enClass,
-            ]}
-            data-brand-en
-            data-en-text={enLine}
-            data-en-base={isFooter ? '10' : '9'}
-          >
-            {enLine}
-          </p>
-        </>
-      ) : (
-        <p
-          class:list={[
-            'brand-en mt-1.5 block max-w-full overflow-hidden whitespace-nowrap font-semibold uppercase leading-none text-navy',
-            enClass,
-          ]}
-          data-brand-en
-          data-en-text={enLine}
-          data-en-base={isFooter ? '10' : '9'}
-        >
-          {enLine}
-        </p>
-      )
-    }
+    <p
+      class:list={[
+        'brand-en mt-1 block max-w-full overflow-hidden whitespace-nowrap font-semibold uppercase leading-none text-navy',
+        enClass,
+      ]}
+      data-brand-en
+      data-en-text={enLine}
+      data-en-base={isFooter ? '10' : '7'}
+    >
+      {enLine}
+    </p>
   </div>
 </div>
 
@@ -115,7 +81,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
 
     if (el.scrollWidth <= targetWidth) {
       let lo = 0;
-      let hi = 0.4;
+      let hi = 0.35;
       for (let i = 0; i < 16; i++) {
         const mid = (lo + hi) / 2;
         el.style.letterSpacing = `${mid}em`;
@@ -134,7 +100,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
     }
 
     let lo = 0;
-    let hi = 0.4;
+    let hi = 0.35;
     for (let i = 0; i < 16; i++) {
       const mid = (lo + hi) / 2;
       el.style.letterSpacing = `${mid}em`;
@@ -144,16 +110,6 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
     el.style.letterSpacing = `${lo}em`;
   };
 
-  const fitStackedEnglish = (container: HTMLElement, targetWidth: number, basePx: number) => {
-    container.style.width = `${targetWidth}px`;
-    container.style.maxWidth = `${targetWidth}px`;
-    container.querySelectorAll<HTMLElement>('.brand-en-line').forEach((line) => {
-      fitEnglishLine(line, targetWidth, basePx);
-      line.style.width = '100%';
-      line.style.maxWidth = '100%';
-    });
-  };
-
   const syncBrandLayout = () => {
     const isMobile = window.matchMedia('(max-width: 767px)').matches;
 
@@ -161,36 +117,28 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
       const ref = mark.querySelector('[data-brand-name-ref]') as HTMLElement | null;
       const textBlock = mark.querySelector('[data-brand-text]') as HTMLElement | null;
       const en = mark.querySelector('[data-brand-en]') as HTMLElement | null;
-      const enStacked = mark.querySelector('[data-brand-en-stacked]') as HTMLElement | null;
       const logoShell = mark.querySelector('.brand-logo-shell') as HTMLElement | null;
       const logo = mark.querySelector('.brand-logo') as HTMLImageElement | null;
 
-      if (!ref || !textBlock) return;
+      if (!ref || !en || !textBlock) return;
 
       const variant = mark.getAttribute('data-variant') ?? 'header';
       const logoHeightDesktop = Number(mark.dataset.logoHeight ?? 104);
-      const logoHeightMobile = Number(mark.dataset.logoHeightMobile ?? 52);
+      const logoHeightMobile = Number(mark.dataset.logoHeightMobile ?? 56);
       const logoHeight =
         variant === 'header' && isMobile ? logoHeightMobile : logoHeightDesktop;
-      const maxTextHeight = logoHeight * Number(mark.dataset.textRatio ?? 0.75);
-      const basePx = Number(
-        (en ?? enStacked)?.getAttribute('data-en-base') ??
-          (variant === 'footer' ? 10 : isMobile ? 7 : 9)
-      );
+      const maxTextHeight = logoHeight * Number(mark.dataset.textRatio ?? 0.88);
+      const basePx = Number(en.dataset.enBase ?? 7);
 
       const targetWidth = ref.offsetWidth;
       textBlock.style.width = `${targetWidth}px`;
       textBlock.style.maxWidth = `${targetWidth}px`;
       textBlock.style.transform = '';
 
-      if (enStacked && isMobile) {
-        fitStackedEnglish(enStacked, targetWidth, basePx);
-      } else if (en) {
-        fitEnglishLine(en, targetWidth, basePx);
-      }
+      fitEnglishLine(en, targetWidth, basePx);
 
       const textHeight = textBlock.offsetHeight;
-      if (textHeight > maxTextHeight && textHeight > 0) {
+      if (textHeight > maxTextHeight && textHeight > 0 && variant === 'footer') {
         const scale = maxTextHeight / textHeight;
         textBlock.style.transform = `scale(${scale})`;
         textBlock.style.transformOrigin = 'left center';
