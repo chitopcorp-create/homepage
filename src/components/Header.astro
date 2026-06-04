@@ -242,8 +242,13 @@ const navGap =
     opacity: 1;
   }
 
+  .mobile-menu-drawer:not(.is-open) {
+    pointer-events: none;
+  }
+
   .mobile-menu-drawer.is-open {
     transform: translateX(0);
+    pointer-events: auto;
   }
 
   .mobile-sub-link:active {
@@ -487,8 +492,7 @@ const navGap =
   });
 
   menuBtn?.addEventListener('click', () => {
-    const isOpen = mobileMenu?.classList.contains('hidden') ?? true;
-    setMobileMenuOpen(isOpen);
+    setMobileMenuOpen(menuBtn.getAttribute('aria-expanded') !== 'true');
   });
 
   mobileMenuClose?.addEventListener('click', () => setMobileMenuOpen(false));
