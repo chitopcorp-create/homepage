@@ -22,6 +22,18 @@ const modalTitle = `${company.nameMain} 홍보영상`;
     />
   </picture>
 
+  <div
+    class="hero-mobile-tagline pointer-events-none absolute left-0 right-0 z-10 flex flex-col items-center px-6 text-center md:hidden"
+    aria-hidden="false"
+  >
+    <p class="hero-mobile-tagline__main text-[1.125rem] font-bold leading-snug tracking-tight text-white sm:text-xl">
+      「환경보존과 인간존중」
+    </p>
+    <p class="hero-mobile-tagline__since mt-2 text-xs font-semibold tracking-[0.35em] text-white/90 sm:text-sm">
+      SINCE 1994
+    </p>
+  </div>
+
   <video
     id="hero-video"
     class="hero-video hidden md:block"
@@ -149,6 +161,17 @@ const modalTitle = `${company.nameMain} 홍보영상`;
     .hero-video {
       display: block;
     }
+  }
+
+  .hero-mobile-tagline {
+    top: calc(var(--site-header-height, 5.5rem) + 2.5rem);
+  }
+
+  .hero-mobile-tagline__main,
+  .hero-mobile-tagline__since {
+    text-shadow:
+      0 2px 12px rgba(0, 0, 0, 0.55),
+      0 1px 4px rgba(0, 0, 0, 0.4);
   }
 
   .hero-scroll-hint {
