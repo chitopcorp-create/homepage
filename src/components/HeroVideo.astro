@@ -6,6 +6,8 @@ const posterSrc = '/images/hero-poster.webp';
 const mobileImageSrc = '/images/hero-mobile.webp';
 const mobileImageFallback = '/images/hero-mobile.jpg';
 const modalTitle = `${company.nameMain} 홍보영상`;
+const contactLocationHref = '/about#location';
+const contactTelHref = `tel:${company.tel.replace(/[^\d+]/g, '')}`;
 ---
 
 <section id="hero-section" class="hero-video-section relative w-full overflow-hidden bg-black" aria-label="메인 영상">
@@ -26,12 +28,63 @@ const modalTitle = `${company.nameMain} 홍보영상`;
     class="hero-mobile-tagline pointer-events-none absolute left-0 right-0 z-10 flex flex-col items-center px-6 text-center md:hidden"
     aria-hidden="false"
   >
-    <p class="hero-mobile-tagline__main text-[1.125rem] font-bold leading-snug tracking-tight text-white sm:text-xl">
+    <p class="hero-mobile-tagline__main font-bold leading-snug tracking-tight text-white">
       「환경보존과 인간존중」
     </p>
-    <p class="hero-mobile-tagline__since mt-2 text-xs font-semibold tracking-[0.35em] text-white/90 sm:text-sm">
+    <p class="hero-mobile-tagline__since mt-2.5 font-semibold tracking-[0.35em] text-white/90">
       SINCE 1994
     </p>
+  </div>
+
+  <div
+    class="hero-contact-oval absolute left-1/2 top-1/2 z-10 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center px-10 py-5 md:hidden"
+  >
+    <button
+      type="button"
+      id="hero-contact-open"
+      class="hero-contact-oval__btn inline-flex min-h-[2.75rem] min-w-[10.5rem] items-center justify-center rounded-full px-10 py-2.5 text-sm font-bold tracking-[0.2em] text-white transition active:opacity-90"
+      aria-haspopup="dialog"
+      aria-controls="hero-contact-sheet"
+      aria-expanded="false"
+    >
+      CONTACT
+    </button>
+  </div>
+
+  <div
+    id="hero-contact-sheet"
+    class="hero-contact-sheet fixed inset-0 z-[65] hidden items-end justify-center bg-black/45 p-4 pb-8 md:hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="hero-contact-sheet-title"
+    hidden
+  >
+    <div class="w-full max-w-sm overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <p id="hero-contact-sheet-title" class="border-b border-gray-100 px-5 py-4 text-center text-sm font-bold tracking-wide text-navy">
+        CONTACT
+      </p>
+      <div class="flex flex-col p-2">
+        <a
+          href={contactLocationHref}
+          class="flex min-h-[3.25rem] items-center justify-center rounded-xl px-4 text-base font-semibold text-navy transition hover:bg-gray-50"
+        >
+          오시는길
+        </a>
+        <a
+          href={contactTelHref}
+          class="flex min-h-[3.25rem] items-center justify-center rounded-xl px-4 text-base font-semibold text-gold transition hover:bg-gray-50"
+        >
+          전화 {company.tel}
+        </a>
+      </div>
+      <button
+        type="button"
+        id="hero-contact-close"
+        class="w-full border-t border-gray-100 py-3.5 text-sm font-medium text-gray-500 transition hover:bg-gray-50"
+      >
+        닫기
+      </button>
+    </div>
   </div>
 
   <video
@@ -164,14 +217,41 @@ const modalTitle = `${company.nameMain} 홍보영상`;
   }
 
   .hero-mobile-tagline {
-    top: calc(var(--site-header-height, 5.5rem) + 2.5rem);
+    top: calc(var(--site-header-height, 5.5rem) + 2rem);
   }
 
-  .hero-mobile-tagline__main,
-  .hero-mobile-tagline__since {
+  .hero-mobile-tagline__main {
+    font-size: clamp(1.375rem, 5.2vw, 1.75rem);
     text-shadow:
       0 2px 12px rgba(0, 0, 0, 0.55),
       0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-mobile-tagline__since {
+    font-size: clamp(0.875rem, 3.2vw, 1.0625rem);
+    text-shadow:
+      0 2px 12px rgba(0, 0, 0, 0.55),
+      0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero-contact-oval {
+    min-width: min(18rem, 78vw);
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .hero-contact-oval__btn {
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+  }
+
+  .hero-contact-sheet.is-open {
+    display: flex;
   }
 
   .hero-scroll-hint {
@@ -276,7 +356,7 @@ const modalTitle = `${company.nameMain} 홍보영상`;
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     playOpen?.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    if (!contactSheet || contactSheet.hasAttribute('hidden')) document.body.style.overflow = '';
     playOpen?.focus();
   };
 
@@ -287,5 +367,37 @@ const modalTitle = `${company.nameMain} 홍보영상`;
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeHeroModal();
+  });
+
+  const contactOpen = document.getElementById('hero-contact-open');
+  const contactClose = document.getElementById('hero-contact-close');
+  const contactSheet = document.getElementById('hero-contact-sheet');
+
+  const isHeroModalOpen = () => modal && !modal.hasAttribute('hidden');
+
+  const openContactSheet = () => {
+    if (!contactSheet || !contactOpen) return;
+    contactSheet.removeAttribute('hidden');
+    contactSheet.classList.add('is-open');
+    contactOpen.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeContactSheet = () => {
+    if (!contactSheet || !contactOpen) return;
+    contactSheet.setAttribute('hidden', '');
+    contactSheet.classList.remove('is-open');
+    contactOpen.setAttribute('aria-expanded', 'false');
+    if (!isHeroModalOpen()) document.body.style.overflow = '';
+    contactOpen.focus();
+  };
+
+  contactOpen?.addEventListener('click', openContactSheet);
+  contactClose?.addEventListener('click', closeContactSheet);
+  contactSheet?.addEventListener('click', (e) => {
+    if (e.target === contactSheet) closeContactSheet();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && contactSheet && !contactSheet.hasAttribute('hidden')) closeContactSheet();
   });
 </script>
