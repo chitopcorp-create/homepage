@@ -10,13 +10,13 @@ const isFooter = variant === 'footer';
 
 const nameMainClass = isFooter
   ? 'text-base sm:text-[1.65rem]'
-  : 'text-lg sm:text-xl md:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
+  : 'text-[0.95rem] sm:text-lg md:text-xl lg:text-[1.65rem] xl:text-[1.75rem]';
 const enClass = isFooter
   ? 'text-[8px] sm:text-[10px]'
-  : 'text-[7px] sm:text-[8px] md:text-[9px] lg:text-[10px]';
+  : 'text-[6px] sm:text-[8px] md:text-[9px] lg:text-[10px]';
 
 const logoHeightPx = isFooter ? 88 : 82;
-const logoHeightMobilePx = isFooter ? 44 : 56;
+const logoHeightMobilePx = isFooter ? 44 : 48;
 const textRatio = isFooter ? 0.75 : 0.88;
 
 const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' ').trim();
@@ -25,7 +25,7 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
 <div
   class:list={[
     'brand-mark flex min-w-0 max-w-full items-center',
-    isFooter ? 'gap-2.5 sm:gap-4' : 'gap-2.5 sm:gap-3 lg:gap-4',
+    isFooter ? 'gap-2.5 sm:gap-4' : 'gap-2 sm:gap-3 lg:gap-4',
     isFooter && 'flex-row items-center',
   ]}
   data-brand-mark
@@ -34,17 +34,28 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
   data-logo-height-mobile={logoHeightMobilePx}
   data-text-ratio={textRatio}
 >
-  <div class="brand-logo-shell flex shrink-0 items-center justify-center">
+  <div
+    class:list={[
+      'brand-logo-shell flex shrink-0 items-center justify-center overflow-hidden',
+      !isFooter && 'h-12 w-12 md:h-auto md:w-auto',
+    ]}
+  >
     <img
       src={company.logo}
       alt={`${company.name} 로고`}
-      class="brand-logo h-full w-auto max-w-none object-contain object-left"
+      class:list={[
+        'brand-logo object-contain object-center md:object-left',
+        !isFooter ? 'h-full w-full max-h-full max-w-full md:h-full md:w-auto md:max-w-none' : 'h-full w-auto max-w-none',
+      ]}
       width="160"
       height="56"
     />
   </div>
 
-  <div class="brand-text flex min-w-0 max-w-full flex-col items-start overflow-hidden" data-brand-text>
+  <div
+    class="brand-text flex min-w-0 flex-1 flex-col items-start overflow-hidden sm:flex-none sm:max-w-full"
+    data-brand-text
+  >
     <div class="brand-name-row whitespace-nowrap leading-none" data-brand-name-ref>
       <span class:list={['brand-name-main font-bmhanna font-bold text-navy', nameMainClass]}>
         {company.nameMain}
@@ -151,10 +162,15 @@ const enLine = `${company.nameEnLeft} ${company.nameEnRight}`.replace(/\s+/g, ' 
     });
   };
 
-  syncBrandLayout();
+  const scheduleSync = () => {
+    syncBrandLayout();
+    requestAnimationFrame(syncBrandLayout);
+  };
+
+  scheduleSync();
   window.addEventListener('resize', syncBrandLayout);
-  document.addEventListener('astro:page-load', syncBrandLayout);
+  document.addEventListener('astro:page-load', scheduleSync);
   if (document.fonts?.ready) {
-    document.fonts.ready.then(syncBrandLayout);
+    document.fonts.ready.then(scheduleSync);
   }
 </script>

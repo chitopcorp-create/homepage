@@ -50,6 +50,24 @@
   color: #fff;
 }
 
+/* 모바일 헤더: JS 전에도 로고·상호 겹침 방지 */
+@media (max-width: 767px) {
+  #site-header [data-brand-mark][data-variant='header'] {
+    max-width: 100%;
+  }
+
+  #site-header [data-brand-mark][data-variant='header'] .brand-logo-shell {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  #site-header [data-brand-mark][data-variant='header'] .brand-text {
+    min-width: 0;
+    flex: 1 1 0%;
+  }
+}
+
 #site-header.header-over-video .brand-logo-shell {
   background: transparent;
 }
