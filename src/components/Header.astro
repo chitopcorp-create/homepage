@@ -118,13 +118,13 @@ const navGap =
 
   <div
     id="mobile-menu-backdrop"
-    class="mobile-menu-backdrop fixed inset-0 z-[44] hidden bg-black/45 md:hidden"
+    class="mobile-menu-backdrop pointer-events-none fixed inset-0 z-[44] bg-black/0 opacity-0 transition-[opacity,background-color] duration-300 md:hidden"
     aria-hidden="true"
   />
 
   <div
     id="mobile-menu"
-    class="mobile-menu-drawer fixed left-0 right-0 bottom-0 z-[45] hidden flex-col overflow-hidden bg-white md:hidden"
+    class="mobile-menu-drawer fixed bottom-0 left-0 z-[45] flex hidden w-[min(82vw,18.75rem)] max-w-[300px] -translate-x-full flex-col overflow-hidden bg-white shadow-[4px_0_24px_rgba(0,0,0,0.15)] transition-transform duration-300 ease-out md:hidden"
     style="top: var(--site-header-height, 5.5rem);"
     aria-hidden="true"
   >
@@ -181,23 +181,18 @@ const navGap =
                     class="mobile-accordion-panel grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out"
                   >
                     <div class="overflow-hidden">
-                      <div
-                        class="mobile-submenu-scroll overflow-x-auto overscroll-x-contain border-t border-gray-100 bg-[#f5f6f8]"
-                        tabindex="0"
-                      >
-                        <ul class="flex w-max min-w-full flex-nowrap items-stretch px-2 py-1">
-                          {item.children!.map((child) => (
-                            <li class="shrink-0">
-                              <a
-                                href={child.href}
-                                class="mobile-sub-link inline-flex min-h-[2.75rem] items-center whitespace-nowrap px-4 py-2.5 text-[0.9375rem] font-medium text-gray-700 transition hover:text-gold"
-                              >
-                                {child.label}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      <ul class="border-t border-gray-100 bg-[#f5f6f8]">
+                        {item.children!.map((child) => (
+                          <li class="border-b border-gray-200/80 last:border-b-0">
+                            <a
+                              href={child.href}
+                              class="mobile-sub-link block px-5 py-3.5 text-[0.9375rem] font-medium text-gray-700 transition hover:bg-white/60 hover:text-gold"
+                            >
+                              {child.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 </>
@@ -241,28 +236,18 @@ const navGap =
     color: #c9a227;
   }
 
-  .mobile-submenu-scroll {
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: #c9a227 transparent;
+  .mobile-menu-backdrop.is-open {
+    pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.45);
+    opacity: 1;
   }
 
-  .mobile-submenu-scroll::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  .mobile-submenu-scroll::-webkit-scrollbar-thumb {
-    border-radius: 9999px;
-    background-color: #c9a227;
-  }
-
-  .mobile-sub-link {
-    border-bottom: 2px solid transparent;
+  .mobile-menu-drawer.is-open {
+    transform: translateX(0);
   }
 
   .mobile-sub-link:active {
     color: #c9a227;
-    border-bottom-color: #c9a227;
   }
 </style>
 
@@ -281,6 +266,7 @@ const navGap =
   const videoHeaderClasses = ['header-over-video'];
 
   let megaOpen = false;
+  let mobileMenuCloseTimer: ReturnType<typeof setTimeout> | undefined;
 
   const closeAllMobileAccordions = () => {
     if (!mobileMenu) return;
@@ -311,24 +297,43 @@ const navGap =
   const setMobileMenuOpen = (open: boolean) => {
     if (!mobileMenu || !menuBtn) return;
 
-    mobileMenu.classList.toggle('hidden', !open);
-    mobileMenu.classList.toggle('flex', open);
-    mobileMenu.setAttribute('aria-hidden', String(!open));
-    mobileMenuBackdrop?.classList.toggle('hidden', !open);
-    mobileMenuBackdrop?.setAttribute('aria-hidden', String(!open));
+    if (mobileMenuCloseTimer) {
+      clearTimeout(mobileMenuCloseTimer);
+      mobileMenuCloseTimer = undefined;
+    }
+
     menuBtn.setAttribute('aria-expanded', String(open));
     menuBtn.setAttribute('aria-label', open ? '메인메뉴 닫기' : '메인메뉴 열기');
     header?.classList.toggle('header-mobile-open', open);
     document.body.style.overflow = open ? 'hidden' : '';
 
     if (open) {
+      mobileMenu.classList.remove('hidden');
+      mobileMenu.classList.add('flex');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      mobileMenuBackdrop?.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => {
+        mobileMenu.classList.add('is-open');
+        mobileMenuBackdrop?.classList.add('is-open');
+      });
       hideMega();
       setSolidBar();
       syncHeaderHeight();
       closeAllMobileAccordions();
     } else {
+      mobileMenu.classList.remove('is-open');
+      mobileMenuBackdrop?.classList.remove('is-open');
+      mobileMenuBackdrop?.setAttribute('aria-hidden', 'true');
       closeAllMobileAccordions();
       updateHeaderOnScroll();
+      mobileMenuCloseTimer = setTimeout(() => {
+        if (menuBtn.getAttribute('aria-expanded') !== 'true') {
+          mobileMenu.classList.add('hidden');
+          mobileMenu.classList.remove('flex');
+          mobileMenu.setAttribute('aria-hidden', 'true');
+        }
+        mobileMenuCloseTimer = undefined;
+      }, 300);
     }
   };
 
